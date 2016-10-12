@@ -1,0 +1,10 @@
+{
+    switch (+ * * x y y z) {
+        case 1: {
+            x = * y 1;
+        }
+        case 2: {
+            r = * s t;
+        }
+    }
+}

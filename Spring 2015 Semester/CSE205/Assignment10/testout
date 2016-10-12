@@ -1,0 +1,54 @@
+Choice      Action
+------      ------
+A       Add String Once
+B       Add String Multiple Times
+C       Check if Empty
+D       Duplicate Strings
+E       Search for String
+L       List Strings
+Q       Quit
+S       Search and Remove
+?       Display Help
+
+What action would you like to perform?
+{ }
+What action would you like to perform?
+Element(s) duplicated if any.
+What action would you like to perform?
+{ }
+What action would you like to perform?
+Please enter an index to search:
+The index is out of bounds
+What action would you like to perform?
+{ }
+What action would you like to perform?
+Please enter a string to be searched and removed:
+What action would you like to perform?
+{ }
+What action would you like to perform?
+Please enter a string to add:
+Please enter a number of times to add:
+What action would you like to perform?
+{ Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape }
+What action would you like to perform?
+Please enter a string to add:
+Please enter a number of times to add:
+What action would you like to perform?
+{ Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon }
+What action would you like to perform?
+Please enter a string to add:
+Please enter a number of times to add:
+What action would you like to perform?
+{ Apple Apple Apple Apple Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon }
+What action would you like to perform?
+Element(s) duplicated if any.
+What action would you like to perform?
+{ Apple Apple Apple Apple Apple Apple Apple Apple Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Grape Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon }
+What action would you like to perform?
+Please enter a string to be searched and removed:
+What action would you like to perform?
+{ Apple Apple Apple Apple Apple Apple Apple Apple Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon Lemon }
+What action would you like to perform?
+Please enter an index to search:
+String at the index 3 is Apple
+What action would you like to perform?

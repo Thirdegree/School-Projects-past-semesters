@@ -1,0 +1,16 @@
+#include <iostream>
+#include <typeinfo>
+
+void foo(int &r) {
+    std::cout << typeid(r) << std::endl;
+}
+
+int main() {
+    int value = 5;
+    int *ptr = &value;
+
+    foo(*ptr);
+    foo(value);
+
+    return 0;
+}

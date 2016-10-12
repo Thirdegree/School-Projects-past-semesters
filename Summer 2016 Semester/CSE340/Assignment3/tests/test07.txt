@@ -1,0 +1,7 @@
+z, w: int;
+f: int;
+
+{
+    h = + z * w f;
+    t = ! true;
+}

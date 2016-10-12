@@ -1,0 +1,513 @@
+ N^+ (v) = {w is an element of V| (v, w) is an element of E} --all the points v points to
+N^- (v) = {w is an element of V| (w, v) is an element of E} --all the points that point to v
+N (v) = {w is an element of V| {v, w} is an element of E}
+N^+ [v] = N^+ (v) union {v} -- v + all the points v points to
+
+let V'<=V. Then G[V'] = (V', E') where E' = {(u,v) is an element of E| u, v is an element of V'}
+G[V'] is an induced subset of G.
+
+connected: x and y are connected if there is an x,y-walk.
+
+The connection relation is the relation R on V s.t. (x,y) is in R iff x is connected to y
+
+Lemma: G The connection relation R is a equivalence relation -- know this proof.
+
+Lemma: let G = (V, E) be a graph. If x,y are in V and G has an x,y-walk W = (v_0 v_1 v_2 ... v_n) then G has an x,y-path
+        Proof:
+            Argue by induction on the length of V, i.e. n.
+            This means we let S = {n in N: for all graphs G and vertices x,y if G has an x,y-walk of length n then G has an x,y-path}
+            Consider any n in N, any graph G, any vertices x,y such that there is an x,y-walk in G. We must show that 
+                *   assume that every smaller n is in S. and show that n is in S
+                *   show that some smaller n is not in S or n is not in S.
+            To show that n is in S, we must find an x,y-path.
+            If W is a path then we are done. Else, W has a repeated vertex. 
+            Say v_i = v_j, i<j. If v_i = y then v_0 ... v_i is a shorter x,y-walk. Else, v_0....v_i v_j....v_n is a shorter walk.
+            Then by assumption, there is an x,y-path in G. Since G, x, y, w are all arbitrary, n is in S.
+
+d(x) = the number of edges incident to x 
+
+δ(G) = smallest number of edges incident with a vertex (for graphs)
+δ^-(G) = smallest number of edges incident to a vertex (digraphs)
+δ^+(G) = smallest number of edges incident from a vertex (digraphs)
+
+Δ(G) = largest number of edges incident with a vertex (for graphs)
+Δ^-(G) = smallest number of edges incident to a vertex (digraphs)
+Δ^+(G) = smallest number of edges incident from a vertex (digraphs)
+
+Maximum path: Path that's a long as possible
+Maximal path: Path that you can't add a new vertex to at either end.
+
+Lemma: Let G = (V, E) be a graph. If δ(G) >= 2 then G has a cycle.
+        Proof:
+            Let P=x_1 .... x_n be a maximum path in G.
+            Then N(x_n) are in V(P) - x_n. Since δ(G) >= 2, d(x_n)>=2 and so x_n has a neighbor x_i =/= x_n-1. Then x_i....x_n-1 x x_i is a cycle
+
+Definition: A tree is a directed graph with no cycles. (A graph with no cycles is said to be acyclic.)
+
+xΔy = semmetric difference. All points in x that aren't in y and all point in y that aren't in x.
+
+Therum: Every tree T satisfies
+    a) Any two vertices are connected by a unique path
+    b) For any edge (e in the set (V(T) chose 2) - E(T)) --read all possible edges, T+e contains a unique cycle.
+    c)|T|=||T||+1 
+
+    Proof:
+        let T = (V, E) be a tree.
+        Consider any x,y in V. They are connected by a walk since T is connected. So they are connected by a path using Lemma (some number). Suppose P = x_1...x_s and Q=y_1...y_i are distinct x, y paths. Then E(P) Δ E(Q)=/={}. Say y_iy_i+1 is in E(Q)\E(P). Then y_i...y_1 = x_1...x_s is an y_i,y_i+1-walk in T-y_iy_i+1. By lemma, there is a y_iy_i+1-path R in T-y_iy_i+1. So R + y_iy_i+1 is a cycle in T.
+
+Lemma: If G has an x,y-walk=W then G has an x,y-path.
+        Proof:
+            Argue by induction on the length of W.
+                Let S={n in N: if G has an x,y-walk of length n, then G has an x,y-path.}
+                Show S = N.
+                By the Induction Therum it suffices to prove 
+                    *   Either (i) {0,1,...,n-1} not in S or (ii) n is in S.
+                If (i) holds we are done; else {0,...,n-1} is in S. It suffices to show that this implies n in S.
+
+Therum: Let T be a tree
+    1) Any two vertices of T are connected by a unique path
+    2) if e in ((V(T) choose 2)-E(T)) (if e is a possible edge between two vertics of a tree, but not an element of the tree)  then T+e has a ! (unique) cycle
+    3) |T| = ||T|| +1 
+        Proof:
+            Argue by induction on |T|
+            If 
+                |T|=1 then |T|=||T||+1
+            Else    
+                Since T is acyclic, δ(T)<=1
+                Since T is connected and |T|>=2, δ(T)>=1
+                So T has a leaf l.
+                By Lemma A, T' = T-l is a tree.
+                By induction |T'| = ||T'|| + 1  #HOLY SHIT I UNDERSTAND INDUCTION HERE
+                |T| = |T'| + 1 = (||T'|| + 1) + 1 = ||T|| + 1
+
+Definition: A leaf is a vertex with degree 1.
+
+Lemma A: If l is a leaf of a tree T then T - l is a tree. --Taking away a leaf leaves a tree
+
+Lemma B: If T is a tree, l is not in V(T) and  u is in V(T) then T + l + ul is a tree. --adding a leaf also leaves a tree
+
+Dijkstra's Algorithm:   
+    1) Initial Labeling
+    2) T:= {{v}, emptyset}
+    3) Find the vertex v' not in V(T) with smallest label, and add v' to V(T), and add its edge
+    4) update L
+
+    1) For all v != u : Label(v) <- weight(uv)
+    2) Label(u) <- 0
+    3) T <- {u}
+    4) while T != V do
+        5) find V' in V-T such that Label(V') <= Label(V) for all v in V-T
+        6) T <- T + V'
+        7) For all v in V-T : Label(V) <- if (Label(V)>Label(V') + weight(VV')) then (Label(V') + weight(VV')) else NULL
+
+FOR NON NEGATIVE WEIGHTS ONLY
+Theory: For all i in V the final value of Label[i] is the weight of the shortest i,u-path
+Theory: For all steps n, for all i in V, the value Label[i] satisfies
+            a) if i in T at step n, the value Label[i] is the weight of the shortest i,u-path 
+            b) if i in V-T, Label[i] is the weight of the shortest i,u-path that only uses internal verticies from T at step n.
+        Proof:  Argue by induction on the step n.
+                Consider any n.
+                    * If n = 1 it is obvious. (Step you add u)
+                    * If n > 1
+                        Consider any i.
+                            * If i in T (proving a)
+                                By induction, Label[i] = weighted distance to u if i was added before the nth step
+                                * If i == T_n - T_(n-1) (it was added on step n)
+                                    Label[i] <= Label[j] for all j in V-T_n
+                                    Let P = (i=)v_0 v_1 v_2 ... v_n(=u) be the sortest path possible
+                                    Let j be the highest index such that v_j not in T_n. Then
+                                        weight[v_j (v_j+1)] + Label[v_(j+1)...u] = weight[v_j (v_j+1)] + Label[v_(j+1)] >= Label(v_j) >= Label[i] >= weight(Q) for any path Q to u that uses only internal vertices in T_(n-1) <= weight(P)
+                                    Since Q is contained in T_n = T_(n-1) + i, Label[i] is the shortest i,u-path
+                            * if i in V-T_n (proving b)
+                                Let P=(i=)v_0 v_1 ... v_i(=u) be the shortest i,u-path where internal vertices are in T_n.
+                                    weight(P) = weight(v_0 v_ 1) + weight(v_1 ... v_i) = weight(V_0 V_1) + Label[v_1] by part a.
+
+w(P) =w(vPx)+w(xPu)
+    >=w(xPu)
+    >=L_(s-1)[x]
+    >=L_(s-1)[v]=L_s[v]
+     =w(Q)
+    >=wdist(v,u)
+     =w(P)
+
+Claim: For all i j k, W_(ij)^k is the w-shortest i,j-path whose internal vertices are contained in {1..k}
+Proof:  Argue by induction on k.
+        If k=0 it is trivial
+        If k>0:
+            Fix i and j.
+            Let P be the w-shortest i,j-path with internal vertices contained in {1..k}
+            If k is not in V(P)
+                By induction w(P) = w_ij^(k-1).
+                By induction there exists paths Q_1 and Q_1 such that
+                    Q_1 is an i,k-path with internal vertices contained in {1..k-1} and 
+                    w(Q_1) = W_ik^(k-1)
+                    Q_2 is a  k,j-path with internal vertices contained in {1..k-1} and
+                    w(Q_2) = W_kj^*k-1)
+                iQ_1kQ_2j is an i,j-walk with weight W_ik^(k-1) + W_kj&(k-1) and internal vertices contained in {1..k}
+                BY Therum, there is a path P' contained in iQ_1kQ_2j with w(Q')<=w(Q)<=W_ik^(k-1) + W_kj^(k-1) < w(P)
+                SO W_ij^k = w_ij^(k-1) = w(P)
+            If k is in V(P)
+                Let 
+                    Q_1 = iPk, with internal vertices contained in {1..k-1}
+                    Q_2 = kPj, with internal vertices contained in {1..k-1}
+                Then by induction
+                    w(Q_1) >= W_ik^(k-1)
+                    W(Q_2) >= W_ik^(k-1)
+                    w(P)   >= W_ik^(k-1) + W_kj^(k-1)
+
+Breadth first search
+
+Depth first search - O(|G| + ||G||)
+
+###########################################################################
+FOR EXAM: 
+    Proofs:
+        Induction Therum
+        If there is a unique walk u,v-walk then there is a unique u,v-path
+        Tree Therum
+    Algorithms (by hand):
+        Semi-kernals
+        Adj. list (directed graph)
+        Dijkstra 
+        Matrix weight Algorithm
+        Depth first search
+###########################################################################
+
+blocks -> A block is a maximum connected subgraph without articulation points 
+articulation point = seperating verticies = cat vertices
+decendents
+ancestors
+back edges
+
+Any root of a depth first search with degree >=2 is an articulation point of the overall graph
+p(v) = how far back we can get if we remove its father
+
+Given a connected, weighted graph, want a minimum weight spanning tree
+
+P v NP
+    Π in NP
+    If there is a polynomial time algorithm a such that for all instances I in Π_yes there is a certificate (guess) such that a(I, C) returns yes. 
+    Traveling Salesmen:
+        Instance:
+            G weigted graph, k in N, 
+        Question: 
+            Is there a hamiltonian cycle with weight <=k?
+    hamiltonian Cycle:
+        Instance:
+            A graph G
+        Question:
+            Does G have a hamiltonian cycle?
+    Traveling Salesmen is harder
+
+    A problem Π in NP is NP-complete if every problem Π' in NP can be tranformed to Π
+    SAT:
+        Instance:
+            Sentence of the form ^ v += P
+                (PvQvRvS)^(-Pvvv)^(vvv)^(vvv)^(vvv)
+        Question:
+            Is there a truth assignment to the variables that makes the sentence true?
+    Cut set:
+        Instance:
+            Collection C of subsets of a set U
+        Question:
+            Can U be partitioned into two sets so that every set S in C has an element in both parts
+    Can we express SAT as Cut Set? 
+        ρ: SAT -> Cut Set
+            Variables, Clauses -> U, C
+                let U = {P: P in V} union {-P: P in V} union {True,False}
+                    C = {{True, False}} union {{A, -A}, {B, -B}, ..., {A, -B, C, False}} 
+
+Find a minimal spanning tree of a conected, weighted graph (G, w)
+    * Input graph
+    * enumerate the edges as e_1', e_2',... by increasing weight.
+    * E(T) := null
+    * for i to ||G|| add e_i' to E(T) if doing so does not create a cycle
+    * Output E(T)
+
+    Therom 18(2): Let G be a connected graph. Every maximal acyclic subgraph H of G is connected.
+        Proof:
+            Since G is connected, the distance between x and y is finite for all x and y in V(G)
+            Argue by induction on n in N that if x and y are vertices in with distance from x to y = n then x is connected to y in H
+            Base: 
+                If n = 0 then
+                    x==y and is connected to itself.
+            Induction:
+                If n > 0 then
+                    Let P be an x,y-path in G with last edge uy and length as small as possible. 
+                    So the distance between x and u is < n.
+                    So by induction, if x is connected to u in H ie there is a x,u-path Q in H then
+                        xQuy is an x,y-walk in H and so x is connected to y in h.
+    
+    Therom 19(2): Let T, T' be spanning trees of graph G. For every edge e of T-T' there is an edge e' in T'-T such that T' + e - e' is a tree
+        Proof: 
+            By tree theorem (2) T' + e contains a unique cycle C. 
+            As T is acyclic, C is not contained in T. 
+            So some edge e' in C is in T'-T.
+            T'+e-e' is acyclic because e' in C and C is the unique cycle of T'+e.
+            By Therom 18(2) T'+e-e' is contained in some tree t^+.
+                ||T^+|| = |T^+|-1 = |T'| - 1 = ||T'|| = ||T'+e-e'|| 
+            So T+e-e' = T^+, and thus is a tree.
+
+    Therom: Kruskal's algorithm creates a minimum weight spanning tree.
+        Proof:
+            We already know that it creates a spanning tree.
+            Let e_1, e_2, ..., e_(n-1) be in order the edges added to T.
+            Argue by induction on i in {0,...,n} that there is a minimal weight spanning tree T^* such that e_1, e_2, ..., e_i in E(T^*)
+            Base:
+                i=0 is trivial
+            Induction:
+                By induction there is a minimal spanning tree T' whose edges contain e_1..e_(i-1).
+                Let T be a spanning tree produced by Kruskal's algorithm.
+                If e_i in E(T') we are done. 
+                Else:
+                    Consider: 
+                        T' + e_i
+                        By tree therum it as a unique cycle C. 
+                        By T,T' proposition there is e' in E(T')-E(T) such that T^* = T' + e_i - e' is a tree.
+                        So {e_1,...,e_i} is a subset of T^*
+                        W(T^*) = W(T') + W(e_i) - W(e')
+                        Since e_1,...,e_i is acyclic, and e_i was the ith edge chosen by Kruskal's algorithm, W(e_i) < w(e')
+                        So w(T^*) <= w(T') <= w(T^*)
+                        So T^* is a minimal spanning tree.
+                As T is the only tree that contains e_1,...e_(n-1), it mus be minimal.
+
+Prim's Alrogirthm for minimum weight spanning tree O(mlog(n)) (m=number of edges)
+    T := EmptySet
+    V' := {u}
+    for all v in V-V' 
+        L(u):=w(uv);
+    while V'!=V do
+        find w with L(w) minimum 
+        let e = wv be an edge with L(w) = w(wv)
+        T:= T+e
+        V' := V'+w
+        for all v in V-V' do L(v):=min(L(v), w(vw))
+    od;
+
+    Proof: Argue by induction on i, that after the ith stage you have a (V',T) is a tree.
+        Base: 
+            If i=1, trivial.
+        Induction:
+            If i>1,
+                Let (V_j, E_j) be the graph after stage j for all j. 
+                Then E_i = E_(i-1) + wv, where w in V_i - V_(i-1) and v in V_(i-1)
+                By induction we know that (V_(i-1), E_(i-1)) is connected and acyclic
+
+
+Prop. T,T' spanning trees
+    (2) For all e in E(T)-E(T') there exists an e' in E(T')-E(T) such that T'+e-e' is a tree.
+
+Prop. Prim's algorithm yields a spanning tree if the input graph G is connected
+
+Ch. 4 Networks
+    Network N = (V, E, x=Source, y=Sink, c=Capacity_Function)
+    (V,E) is a connected digraph.
+    x is a Source, ie d^+(x) > 0
+    y is a Sink, ie d^-(y) > 0
+    c: E -> Z^+ (Z is the set of Integers, Z^+ is positive integers)
+
+    A flow is a function f: E->|N such that for all v not in {x,y}  Σ e in E(v, V-v) (f(e)) = Σ e in E(V-v, v) (f(e))
+    0<=f(e)<=c(e) for all e in E
+
+    problem is to max F(f) = Σ e in E(x, V-x) (f(e)) - Σ e in E(V-x, x) (f(e))
+
+    Definitions:
+        Cut (P,P_bar) - x in P , y in P_bar
+        Capacity - total flow from P to P_bar
+
+    K(P) = Σ e in E(P, P_bar) c(e)
+
+
+
+    Therom: 
+        4.1) For all flows f and cuts P, F(f) <= K(P)
+            Proof: 
+                F(f) = (Σ e in E(x, V-x) (f(e))) - (Σ e in E(V-x, x) (f(e)))
+                Σ u in P ((Σ e in E(u, V-u) f(e))- Σ e in E(V-u, u) f(e)) = 
+                Σ u in P ((Σ e in E(u, P-u) f(x)) + (Σ e in E(P_bar-u, u) f(e)) - (Σ e in E(P-u, u) f(e)) - (Σ e in E(P_bar, u) f(e))) <= K(P) (see notes for more detail.)
+
+    (V,E) is a digraph.
+
+    x-<-e_1->-e_2->-e_3-<-e_4-<-y
+     -Δ    +Δ    +Δ    -Δ    -Δ
+
+    Δ_1=f(e_1,x)
+    Δ_2=c(e_1,e_2)-f(e_1,e_2)
+    Δ_3=
+    Δ_4=
+    Δ_5=
+    Δ = min Δ_i
+
+    Notation:
+        e^* = reverse direction e.
+        Let G^f = (V,E^f), where E^f = {uv | (uv in E, c(uv)-f(uv)>0) or 
+                                             (vu in E, f(vu)>0)}
+        Lemma: 
+            If G^f has a directed x,y-path
+            then N has an f-augmenting path
+
+    Therum: 
+        Let N = (V,E,x,y,c) be a network with a flow f.
+        If there is no f-augmenting path then f is already maximum.
+        Proof:
+            Let P = {v in V | there is a directed x,v-path in G^f}. 
+            Then x in P.
+            Since there are no f-augmenting paths, there are no x,y-paths in G^f.
+            So y not in P. So y in P_bar. Thus (P,P_bar) is a cut.
+            1)V(f) = Σ e in E(P,P_bar) f(e) - Σ e in E(P_bar, P) f(e)
+            2)Consider e in E(P,P_bar). Since e not in E^f, c(e) = f(e).
+            3)Consider e in E(P_bar,P). Since e^* not in E^f, f(e) = 0.
+            Comining 1-3,
+                V(f) =  Σ e in E(P,P_bar) f(e) - Σ e in E(P_bar,P) f(e) = Σ e in E(P,P_bar) c(e) - 0 = K(P)
+
+    Definitions:
+        G an undirected graph 
+        K'(G) = C_e(x,y) = minimum number of edges where removal disconnects some x and y.
+        λ'(G) = P_e(x,y) = maximum number of edge disjoint x,y-paths.
+        C_v(x,y) = minimum number of vertices whose removal disconnects x and y.
+        P_v(x,y) = maximum number of disjoint x,y-paths.
+
+    Therom 1: For every graph G=(V,E), (x,y) in V, C_e(x,y) = P_e(x,y)
+        Proof: Fix G = (V,E), x,y in V
+            Build a network N = (V,E_<->,x,y,c(e)=1)
+            By Max Flow = Min cut theorum, there exists a cut P and a flow f of this network such that K(P)=V(F)
+            Among such, chose f such that N has the fewest number of edges with positive flow.
+            Consider only the edges with 0 flow.
+            Claim: These edges cover V(F) edge disjoint paths. 
+                V(f) <= P_e(x,y)
+                P_e(x,y) <= c_e(x,y) #Since to disconnect x and y we must remove at least one edge from each of the edge of P_e(x,y) edge disjoint paths.
+                V(f) = K(P)
+                c_e(x,y)<=K(P)
+                c_e(x,y)<=K(P)=V(f)<=P_e(x,y)<=c_e(x,y)
+                K(P) = |E(P,P_bar)|, since all capacities are 1
+                Removing the edges in E(P,P_bar) kills all x,y-dipaths in N.
+                For every x,y-path in G corresponds to an 
+
+    Therom c_e(x,y) = P_e(x,y)
+        Proof: For all G=(V,E), all x,y with xy not in E.
+            Fix graph G, vertices x,y not in V, xy not in E
+            Build a network N = ({v', v''| v in V}, {a'a'' | a in V}u{a''b'|ab in E},x'',y',{c(int=inf),c(ext=1)})
+            By max flow-min cut Therum, there are a cut P and a flow f such that V(f) = K(P)
+
+    Σ e in E(v,V-v) (f(e)) = Σ e in E(V-v,v) (f(e))
+    0 <= f(e) <= c(e)
+
+    Therem: If on every augmentation step of the max-flow algorithm we augument by a shortest path in the auxillary graph, then there are at most (1/2)n|E| augmentations.
+        Proof: 
+            Claim 1: For all uv in E if uv is a bottleneck edge at step k and at step m k<m then there is a stage l such that vu in P^l (the augmentating path at stage l)
+
+            Claim 2: For all u in V distance^k(x,u)<=distance^(k+1)(x,u) and distance^k(u,y)<=distance^(k+1)(u,y)
+                Proof: 
+                    Let (u_0=x)x_1x_2x_3...(x_i=u) be a shortest x,u-path N^(k+1)
+                    Argue by induction on i. 
+                    Base Step: i=0 is trivial
+                    Induction step: i>0
+                        If u_(i-1)u_i in N^k then 
+                            distance^k(x,u_i)<=distance^k(x,u_(i-1))+1<=distance^(k+1)(x,u_(i-1))+1 = distance^(k+1)(x,u_i)
+                        Else
+                            then at stage k we changed the flow on u_iu_(i-1). So u_iu_(i-1) in N^k
+                                distance^(k+1)(x,u_i)=distance^(k+1)(x,u_i)+1>=d^k(x,u_(i-1))+1>=d^k(x,u_i)
+
+            Claim 3: If k<l uv in P^k and vu in P^l then distance^k(x,y)<=distance^l(x,y)+2
+                Proof:
+                    d^k(x,y)=d^k(x,u)+1+d^k(v,y)
+                    d^l(x,y)=d^l(x,v)+1+d^l(v,y)
+                            >=d^k(x,v)+1+d^k(u,y)
+                            >=(d^k(x,u)+1)+1+(d^k(v,y)+1)
+                            >=d^k(x,u)+1+d^k(v,y)+2
+                            =d^k(x,y)+2
+
+            Let uv be the edge that is the bottleneck edge the most times, and let this number of times be s.
+
+HW 1.14
+    1) For all v in V do BFI(v)=0
+    2) i<-1, BFI(u)<-1
+    3) all u to the queue
+    4) while the que is not empty do
+        5) remove 1st vertex w from queue
+        6) for all v in Adj(w) do
+            7) if BFI(v)=0 then
+                8) BFI(v)<-i+1
+                9) i<-i+1
+                10) add v to the queue
+            fi
+        od
+    od
+
+CH5: Matchings
+    Def: 
+        A matching in a graph G=(V,E) is a subset M of E such that no two edges in M are adjacent (share a vertice).
+        A graph is bipartite if its verticies can be partitioned into two independent sets.
+
+    Therom:     
+        A graph is bipartite iff it has no odd cycle.
+        Lemma:
+            Every closed odd walk contains an odd cycle.
+        Proof:
+            Suppose G is bipartite with bipartition {A,B}. It suffices to prove that every cycle is even.
+            Consider any cycle C. Let every edge c have exactly 1 end in A. Every vertex of A intersect V(C) is incidint to exactly 2 edges of C. 
+            So ||C|| = 2|A intersect V(C)|
+
+
+            Now suppose G has no odd cycle and show that G is bipartite.
+            Without loss of generality G is connected. Fix a vertex x_0.
+            Let A = {x in V such that there exists a walk x_0x_1x_2...(x_2k=x)} (an even walk).
+            Any vertex in V-A is connected to x_0 by an odd walk.
+            Claim: [A,V-A] is a bipartition of G.
+                Suppose yz in E, and both y,z are in the same part of the partition.
+                Therefor x_0...yz...x_0 is a closed odd walk, therefor there is an odd cycle (Lemma), which is a contradiction.
+
+    Suppose G ahs bipartition (V_1,V_2). Find flow from V_1,V_2.
+
+    Hall's Therom: 
+        Let G=(V,E) be a graph with bipartition (V_1,V_2). Then there exists a matching from V_1 to V_2 iff for all S of V_1, |N(S)| >= |S|. (N is neighbors)
+        Proof:
+            Consider the network N=(V, E union k(xv_1) union k(v_2y), x, y, c) where c(xu)= 1, c(v,y)=1, c(uv)=inf. 
+            Then G has a matching the size of the max V(f)=min K(P)
+            let f be a max flow and P be a min cut and M be a max matching. 
+            Then E(P intersect V_1, P_bar intersect V_2)=emptyset. So N(P intersect V_1) is a subset of (P union V_2).
+            If     |P intersect V_1| + |P_bar intersect V_2|    
+                =  |V_1| > |M| 
+                =  K(P) 
+                =  |V_1 intersect P_bar | + |V_2 intersect P| 
+                >= |V_1 intersect P_bar| + |N(V_1 intersect P)|
+            then 
+                |P intersect V_1|>|N(P intersect V_1)| so let S = P intersect V_1
+
+    Two problems:
+        maximize |M|
+        maximize w(M)
+
+    Suppose we have a matching M.
+        Free vertex - a vertex that is not incident to an edge of M.
+        Alternating path - a path in which every other edge is in M.
+        Augmenting path - an alternating path in which the two verticies at the ends are both free.
+        Theorem: Suppose we have a matching M. M has an augmenting path iff M is not maximum. G=(V,E)
+            Proof: 
+                (=>)
+                    Suppose P is an augmenting path for M. 
+                    Then M-E(P) Union (E(P)-M) is a larger matching.
+                (<=)
+                    Suppose M is not maximum. So M' is a matching with |M'|>|M|.
+                    Let G'=(V,M xor M')
+                    Δ(G')<=2 So the components of G' are alternating paths or alternating cycles.
+                        * G' has more edges from M' than from M.
+                        * Alternating cycles have the same number of edges from M and M'
+                    So there must be at least one alternating path with more edges from M' than from M. 
+                    It is augmenting.
+
+    Hall's therom general case
+        0) Fix a free vertex as the root and call it outer. All edges are unexplored.
+        1) If there is no outer vertex x incident to an edge xy then goto H. Else fix x,y,xy, and deem xy explored.
+        2) If y is free goto A.
+        3) If y is outer goto B.
+        4) If y is inner goto 1).
+        5) Else y is incident to an unexplored matching edge yz. Add xy and yz to T. Mark y as inner, and z as outer. Goto 1).
+
+    Maximum matching algorithm 
+        1) Let v be a free vertice, call v outer
+        2) Try to find an outer vertex x and an edge xy that has not been explored. Deem xy explored.
+            a) If there is no such edge, get rid of everything we've explored so far. None of it can be used in an augmenting path.
+            b) If y is outer, then make a blossom (contract all those edges and verticies into a single vertex)
+            c) If y is free, we have found an augmenting path.
+        3) GOTO 1

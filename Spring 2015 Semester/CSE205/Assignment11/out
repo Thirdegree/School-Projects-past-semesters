@@ -1,0 +1,91 @@
+Choice		Action
+------		------
+E		Enter Maze Information
+Q		Quit
+?		Display Help
+
+What action would you like to perform?
+Please enter the maze information
+Trying the position of row 0 and column 9
+Trying the position of row 1 and column 8
+Trying the position of row 2 and column 8
+Trying the position of row 3 and column 8
+Trying the position of row 4 and column 8
+Trying the position of row 5 and column 7
+Trying the position of row 6 and column 7
+Trying the position of row 6 and column 6
+Trying the position of row 5 and column 6
+Trying the position of row 4 and column 5
+Trying the position of row 5 and column 4
+Trying the position of row 6 and column 3
+Trying the position of row 7 and column 3
+Trying the position of row 7 and column 4
+Trying the position of row 7 and column 3
+Trying the position of row 6 and column 3
+Trying the position of row 5 and column 4
+Trying the position of row 4 and column 4
+Trying the position of row 3 and column 5
+Trying the position of row 2 and column 4
+Trying the position of row 1 and column 4
+Trying the position of row 0 and column 4
+Trying the position of row 0 and column 5
+Trying the position of row 0 and column 6
+Trying the position of row 1 and column 6
+Trying the position of row 0 and column 7
+Trying the position of row 1 and column 7
+Trying the position of row 2 and column 7
+Trying the position of row 1 and column 7
+Trying the position of row 0 and column 8
+Trying the position of row 1 and column 7
+Trying the position of row 0 and column 7
+Trying the position of row 1 and column 6
+Trying the position of row 0 and column 6
+Trying the position of row 0 and column 5
+Trying the position of row 0 and column 4
+Trying the position of row 1 and column 4
+Trying the position of row 2 and column 4
+Trying the position of row 3 and column 5
+Trying the position of row 4 and column 6
+Trying the position of row 4 and column 7
+Trying the position of row 4 and column 6
+Trying the position of row 3 and column 5
+Trying the position of row 4 and column 4
+Trying the position of row 5 and column 4
+Trying the position of row 4 and column 5
+Trying the position of row 5 and column 6
+Trying the position of row 6 and column 6
+Trying the position of row 6 and column 7
+Trying the position of row 6 and column 8
+Trying the position of row 5 and column 9
+Trying the position of row 6 and column 9
+Trying the position of row 7 and column 9
+Trying the position of row 6 and column 9
+Trying the position of row 5 and column 9
+Trying the position of row 4 and column 9
+Trying the position of row 3 and column 9
+Trying the position of row 4 and column 9
+Trying the position of row 5 and column 9
+Trying the position of row 6 and column 8
+Trying the position of row 6 and column 7
+Trying the position of row 5 and column 7
+Trying the position of row 4 and column 8
+Trying the position of row 3 and column 8
+Trying the position of row 2 and column 8
+Trying the position of row 1 and column 8
+Trying the position of row 0 and column 9
+
+solution not found
+
+The maze content:
+...#OOOOO>
+#..#O#OOO#
+#..#O##OO#
+...##O##OO
+#..#OOOOOO
+.###O#OO#O
+..#O##OOOO
+#.#OO####O
+.#####.###
+<.#.###...
+
+What action would you like to perform?

@@ -1,0 +1,110 @@
+Choice      Action
+------      ------
+A       Add Employee
+C       Compute Pay
+D       Search for Employee
+L       List Employees
+Q       Quit
+?       Display Help
+
+What action would you like to perform?
+Please enter some employee information to add:
+What action would you like to perform?
+Please enter some employee information to add:
+What action would you like to perform?
+Please enter some employee information to add:
+What action would you like to perform?
+Please enter some employee information to add:
+What action would you like to perform?
+
+Part Time Employee:
+First name:     Mary
+Last name:      Williams
+Employee ID:        000002
+Pay:            $0.00
+Rate:           $25.25
+Hours:          20
+
+
+Full Time Employee:
+First name:     Leo
+Last name:      Roberts
+Employee ID:        200005
+Pay:            $0.00
+Rate:           $400,000.00
+Bonus:          $52,000.00
+
+
+Volunteer:
+First name:     Sam
+Last name:      Walker
+Employee ID:        000001
+Pay:            $0.00
+
+
+Full Time Employee:
+First name:     Angel
+Last name:      Davies
+Employee ID:        123456
+Pay:            $0.00
+Rate:           $150,000.00
+Bonus:          $12,000.00
+
+What action would you like to perform?
+Please enter an employeeID to search:
+Employee not found
+What action would you like to perform?
+Please enter an employeeID to search:
+Employee found
+What action would you like to perform?
+Please enter an employeeID to search:
+Employee not found
+What action would you like to perform?
+Please enter an employeeID to search:
+Employee found
+What action would you like to perform?
+pay computed
+What action would you like to perform?
+
+Part Time Employee:
+First name:     Mary
+Last name:      Williams
+Employee ID:        000002
+Pay:            $505.00
+Rate:           $25.25
+Hours:          20
+
+
+Full Time Employee:
+First name:     Leo
+Last name:      Roberts
+Employee ID:        200005
+Pay:            $452,000.00
+Rate:           $400,000.00
+Bonus:          $52,000.00
+
+
+Volunteer:
+First name:     Sam
+Last name:      Walker
+Employee ID:        000001
+Pay:            $0.00
+
+
+Full Time Employee:
+First name:     Angel
+Last name:      Davies
+Employee ID:        123456
+Pay:            $162,000.00
+Rate:           $150,000.00
+Bonus:          $12,000.00
+
+What action would you like to perform?
+Unknown action
+What action would you like to perform?
+Unknown action
+What action would you like to perform?
+Unknown action
+What action would you like to perform?
+Unknown action
+What action would you like to perform?

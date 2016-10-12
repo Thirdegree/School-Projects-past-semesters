@@ -1,0 +1,22 @@
+#DATA DEPENDENCIES (NEED THIS ON CHEAT SHEET)
+
+lw  $t0, 0($t1)     a)
+add $t3, $t2, $t0   b)
+add $t4, $t3, $t2   c)
+sub $t5, $t3, $t2   d)
+sub $t6, $t5, $t3   e)
+lw  $t1, 0($t6)     f)
+
+a) None
+b) $t0 Stall
+c) $t3 Forward
+d) $t3 Forward
+e) $t3, $t5
+f) $t6 Forward
+
+FOR ALL |IF|->|ID|->|EX|->|MEM|->|WB|
+
+11 total cycles
+
+Hazard detection unit formulas
+Forward detection unit formulas

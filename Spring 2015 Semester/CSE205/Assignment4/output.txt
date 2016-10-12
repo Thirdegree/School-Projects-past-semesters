@@ -1,0 +1,52 @@
+Choice      Action
+------      ------
+A       Add Book
+D       Display Book
+Q       Quit
+R       Give Rating
+?       Display Help
+
+What action would you like to perform?
+Please enter the book information:
+Enter a book title:
+Enter its publisher:
+What action would you like to perform?
+
+Title:  Building Java Programs,
+Publisher:  Prentice Hall,
+Reviews:    0.00(0)
+
+What action would you like to perform?
+Please give a rating of the book:
+What action would you like to perform?
+
+Title:  Building Java Programs,
+Publisher:  Prentice Hall,
+Reviews:    2.00(1)
+
+What action would you like to perform?
+Please give a rating of the book:
+What action would you like to perform?
+
+Title:  Building Java Programs,
+Publisher:  Prentice Hall,
+Reviews:    3.50(2)
+
+What action would you like to perform?
+Please give a rating of the book:
+What action would you like to perform?
+
+Title:  Building Java Programs,
+Publisher:  Prentice Hall,
+Reviews:    2.83(3)
+
+What action would you like to perform?
+Choice      Action
+------      ------
+A       Add Book
+D       Display Book
+Q       Quit
+R       Give Rating
+?       Display Help
+
+What action would you like to perform?

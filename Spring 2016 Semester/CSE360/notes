@@ -1,0 +1,463 @@
+1968 - Solve the software crisis
+    late
+    over budget
+    failures
+
+Software Engineering - The establishment and use of sound engineering principles in order to obtain economically software that is reliable and works efficiently on real machines.
+
+feasible
+design
+manufacture
+
+       |              /| /
+       |          /| / |/
+       |      /| / |/
+defects|  /| / |/
+       | / |/
+       |/
+       -------------------
+                    time
+
+2006
+    35% successful projects
+    19% canceled projects
+    46% completed   late                    | Documentation Focus
+                    over budget             | Not enough customer involvement
+                    missing features        |
+
+Tools & techniques 
+    Requirements
+    Design
+    Coding
+    Testing
+
+Life Cycle Models
+    Allow practitioners to organize software engineering tasks in a certain way
+    No single process model that works well for all projects
+    goal: produce high quality product on time and within budget
+
+    Consider  
+        1. Flow of activities
+        2. Work products 
+        3. Quality Requirements
+        4. Project management
+        5. Stakeholder involvement
+            - anyone with a vested interest in success
+        6. Team makeup
+
+    Classification
+        plan driven vs agile
+        incremental vs evolutionary
+
+    Ideal view:
+        Nill -> Requirements -> Analysis -> Design -> Implementation -> Development
+
+    Moving target
+        1. Change in requirements while product is in development 
+        2. Change can impact schedule, code quality
+            - dependencies are introduced
+            - regression fault
+        3. if there are too many changes
+            - redesign
+            - restart
+        4. change is inevitable 
+        5. no solution to moving target problem 
+
+        Incremental vs. Evolutionary
+            Incremental
+                scheduling and staging
+                integrated as they are completed
+
+            Evolutionary
+                rework
+                revise
+                improve
+
+        Code-and-Fix Model
+            Implement first version -> Modify until client is satisfied -> Maintenance -> Retirement
+            BUILD A HOUSE USING:
+                Don't do this.
+
+        WaterFall Model
+            Requirements -> Analysis -> Design -> Implementation -> Maintenance -> Retirement
+            All feedback into stages above.
+            ((Fuck waterfall.))
+            BUILD A HOUSE USING:
+                Also don't do this.
+
+        Prototyping
+            Evolutionary
+            Communication -> Quick Plan -> Modeling Quick Design -> Construction of Prototype -> Deployment Delivery and Feedback -> Communication -> ...
+
+
+        Spiral Model 
+            Risk analysis (Rapid Prototype) -> Risk Analysis (Specifications) -> Risk Analysis (Design) -> Risk Analysis (Implementation) -> Risk Analysis (Maintenance) -> Retirement
+
+            I swear business majors make this shit up for fun when they're stoned out of their minds.
+
+    Agile software development
+        Characteristics
+            - effective response to change
+                - adaptive
+                - moves quickly
+            - effective communication with all stakeholders
+            - drawing customer into Team
+            - make the team be in control
+            - use evolutionary and/or incremental 
+
+        Process
+            - driven by customer descriptions
+                - scenarios
+                - user stories
+            - plan
+                - sort term
+            - iterative process
+                - multiple deliverables
+            - adaptive as change occurs
+
+        Human Factors
+            Key traits
+                - communication
+                - cooperation
+                - self motivation
+                - goal setting
+                - competence
+                - adaptive
+                - make decision
+                - solve problems
+                - trust and respect
+
+        Life Cycle (Scrum)
+            - development work is partitioned into packs called "sprints"
+                - pass or fail
+                    - fail happens when sprint is not completed or is completed too early
+                - product owner
+                    - works with client, works with technical team, represents customer interest
+                - scrum master
+                    - keeps technical team on focus, interacts with product owner
+                - team members
+                    - actually do something worthwhile
+            - testing and documentation are ongoing
+            - iterative with focus on developing working code
+            - maintain backlog of existing requirements
+            - demo to client at end of sprint 
+
+"Good" vs "Bad" code
+    "Bad" code
+        - lack of documentation
+        - poor use of whitespace
+        - poor user interface design
+        - non descriptive variable names
+        - poor use of break, continue, return
+        - lack of garbage collection
+        - inefficient
+        - doesn't work
+        - doesn't compile
+        - poor use of pointers
+        - too complex
+        - global variables
+        - exception handling overuse
+        - poor modularity
+    
+Debugging
+    Effort + time
+        diagnose problem
+        fix
+        retest
+
+    Symptoms vs causes
+        - geographically separated
+        - disappear when another problem is fixed
+        - wrong assumption
+        - intermittent
+
+    Something to think about
+        1. think before you act
+        2. use tools for insight
+    
+    ------------------------------
+        public void print() {
+            printList(list);
+        }
+
+        private void printLint(Node ptr) {
+            //if (ptr != null) {
+                if (ptr.next != null) {
+                    System.out.println(ptr.data + " ");
+                    printList(ptr.next);
+                }
+            //  else {
+            //      System.out.println(ptr.data);
+            //  }
+            //}
+        }
+    ------------------------------
+    DOES NOT WORK WITHOUT COMMENTED OUT SHIT
+
+    Instrumenting code
+        1. add code for debugging
+        2. do not include output in final product 
+            - set condition for compiling 
+                #ifdef
+            - set condition for output
+                if (debug)
+                    System.out.println("blah blah blah");
+                - At compile time or at run time
+            - comment out 
+                - use keyword debug
+                System.out.println("Debug: " + data); //DEBUG
+        3. use a debugger
+
+Traditional development
+    1) collect requirements
+    2) design solution
+    3) code solution
+    4) test solution
+    5) Deliver
+
+Test Driven Development (Red-Green-Refactor)
+    - approach to design and implementation process
+
+    - main objective is code design
+        - tests are useful side products
+        
+    1) write a test
+    2) run all tests
+    3) write implementation
+    4) run tests
+    5) refactor
+
+    RED STATE
+        - write tests
+        - tests are supposed to fail. tests that pass are wrong.
+
+    GREEN STATE
+        - starts when implementation of last test is finished
+        - ends when all tests pass
+
+    REFACTOR
+        - improve but not add more features
+
+    CREATING UNIT TESTS
+        - check resources in lecture slides
+        - see notes.java "Dummy" and "DummyTest"
+        ALL TESTS NEED TO BE 100% INDEPENDENT 
+        - lots of asserts. lots and lots of asserts.    
+
+    Stack 
+        - pop
+        - push
+        - peek
+        - toString
+
+    Stack Tests
+        Stack tempStack = new Stack();
+        assertNotNull(tempStack);
+        tempStack.push(5);
+        tempStack.push(4);
+
+        int val = tempStack.pop();
+        assertEquals(4, val);
+
+Configuration management
+    Change management
+
+    Version management
+        - ((please be git, please be git))
+        - Vocab
+            - Codeline - sequence of versions of source code
+            - Baseline - definition of a specific System
+            - Code sharing 
+                cop - modify - merge
+            - Centralized vs. Distributed
+
+    System building
+
+    Release management
+
+Requirements
+    Good requirements
+        - help obtaining agreement on the software engineering tasks
+        - enable planning
+        - improve quality- reduce wasting of resources
+
+    Bad requirements
+        - various (old & new) studies show there is a high cost for having poor requirements
+
+    - Gathering of, defining, and specifying requirements is a team-oriented activity
+        - Customers and users
+        - Business managers
+        - Contract monitors
+        - Analysts
+        - Designers
+        - Testers
+
+    - Requirements Engineering
+        - Inception - Determining the scope and feasibility of the projects
+            - basic understanding of the problem
+            - the people who want a solution
+            - the nature of the solution desired
+            - the effectiveness of preliminary communication and collaboration between the customer and the developer
+
+            Outcome:
+                Initial Use-cases, use-case diagram, user guide
+        - Elicitation - elicit requirements from all stakeholders
+            Outcome: 
+                Refined use-case, use-case diagrams, System Requirement Specifications (SRS) document
+
+        - Elaboration - create and analysis model that identifies data, function, and behavioral requirements
+            - A set of models, the first technical representation of a system
+            - The analysis model bridges between the system ... 
+            
+
+        - Negotiation - agree on a deliverable system that is realistic for developers and Customers
+
+        - Specification - High-level system features in a documented form 
+            - A written document
+            - A set of models
+            - A formal mathematical model
+            - A collection of user scenarios (use-cases)
+            - A prototype
+
+        - Validation - a review mechanism that looks for correctness of requirements
+            - Errors in content or interpretation
+            - areas where clarification may be required
+            - missing information
+            - inconsistencies (a major problem when large products or systems are engineered)
+            - conflicting or unrealistic (unachievable) requirements
+
+    - Where do you start?
+        - Conduct face-to-face interviews
+        - Questionnaire
+        - Workplace Observations
+        - Study similar systems - be careful to filter out required information only.
+
+    - Building the Analysis Model
+        - Scenario-based elements
+            - Functional - Processing narratives for software functions 
+            - Use-case - descriptions of the interaction between and "actor" and the system
+        - Class-based elements
+            - Implied by scenarios
+        - Behavioral elements
+            - State diagrams
+        - Flow-oriented elements
+            - Data flow diagrams
+
+    - What is use case modeling?
+        - use case model: a view of a system that emphasizes the behavior as it appears to outside users
+        - use case model partitions system functionality into transactions ('use cases') that are meaningful to users ('actors')
+
+    - Use-cases
+        - A collection of user scenarios that describe the thread of usage of a system
+        - Each scenario is described from the point-of-view of an "actor" - a person or device that interacts with the software in some way
+        - Each scenario answers
+            - Who is the primary actor, the secondary actor(s)?
+            - What are the actor's goals?
+            - What preconditions should exist before the story begin?
+            - What main tasks or functions are performed by the actor?
+            - What variations in the actor's interaction are possible?
+            - What information does the actor desire from the system?
+        - Typical interaction between a user and a computer system
+            - captures some user-visible function
+            - May be small or large
+            - achieves a discrete goal for user
+
+        - Helpful in 3 areas
+            - Determining features (requirements) New use cases often generate new requirements as the system is analyzed and the design takes shape 
+            - Communicating with clients. Their notational simplicity makes use case diagrams a good way for developers to communicate with clients.
+            - Generating test cases. The collection of scenarios for a use case may suggest a suite of test cases for those scenarios.
+
+        - Definitions
+            - Use Case: a sequence of actions a system performs that yield an observable result of value to a particular actor.
+            - Actor: someone or something that interacts with the system. 
+
+        - Breaking the definition down
+            - Sequence of actions
+                - Describes a set of functions or algorithm
+                - Se is invoked when actor initiates use case
+                - Action is atomic (all or nothing)
+            - System performs
+                - System works for the actor
+                - Takes orders from actor
+            - Observable result of value
+                - Use case must be of value to actor
+                - The action is not the use - why is done is the use
+
+        - How to capture use cases
+            - Talk to typical users
+            - Identify each discrete thing they want to do 
+            - Give it a name 
+            - Write up a short textual description 
+
+        - Use case modeling tips
+            - Make sure that each user case describes a significant chunk of system usage that is understandable by both domain experts and programmers
+            - When defining use cases in text, use nouns and verbs accurately and consistently to help derive objects and messages for interaction diagrams
+            - Factor out common usages that are required by multiple use cases
+                - If the usage is required, use <<include>>
+                - If the base case is complete and the usage is optional, use <<extend>>
+            - A use case diagram should
+                - contain only use cases at the same level of abstraction
+                - include only required actors
+
+        - Use case Hints
+            - Use language of users
+            - Specify actor names by specific roles
+            - Avoid implementation
+                - not a design/algorithm
+            - Names single, identifiable, and reasonably atomic behavior
+            - Describes flow of events clearly enough so outsider can read
+
+        - Use case Documentation
+            - Use case diagrams
+                - Actors
+                - Actions
+            - Text based
+
+        - Use case template
+            - Name 
+                - Unique name identifying use case
+                - Describes what is achieved by the interaction with the actors
+I GIVE UP TRYING TO KEEP UP FOR TODAY. SHE'S JUST READING OFF A POWERPOINT
+
+Functional vs Nonfucntional Requirements:
+    - What does the software system do?
+        - Function 1 
+        - Function 2
+        - Function 3
+    
+    - What is the experiance?
+        - Usability
+
+    - How well is the software created?
+        - Maintainablility
+        - Portability 
+
+USER stories
+    sprints
+        - A sprint is a basic unit of development, usually one week to one month in length.
+        - During each "sprint", the team creates a potentially shippable product increment (ex working and tested software)
+        - Each sprint is proceeded by a planning meeting where tasks for the sprint are identified and an estimated commitment for the goal is made
+    Sprint backlog
+        - The sprint backlog is the list of work the team must address during the next sprint.
+        - the list is derived by selecting stories/features from the top of the product backlog until the team feels they have enough work to fill the sprint.
+
+FUCK IT SHE'S LITERALLY SAYING THE POWERPOINT AGAIN.
+
+1 begin
+2   num i = 3;
+3   num2 = num + 2;
+4   num3 = num2 + 4;
+5 end
+
+cyclomatic complexity = V(G) = 1
+
+1 begin
+2   if num > 0
+3       num2 = 7
+4   else 
+5       num2 = 3
+6   if num2 == 7
+7       num = 0
+8 end
+
+cyclomatic complexity = V(G) = 3

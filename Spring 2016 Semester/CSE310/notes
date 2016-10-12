@@ -1,0 +1,1176 @@
+Her grades are based entirely on magic. Also stack ranking.
+
+CH.2 Getting Started:
+	Sorting:
+		The sorting problem:
+			Input   - A sequence of n numbers <a_1, a_2, ..., a_n>
+			Output  - A permutation of the sequence <a_1`, a_2`, ..., a_n`> such that a_1` <= a_2' <= ... <= a_n`
+
+		Insertion sort: (1-indexed for simplicity)
+			Input   - [5,2,4,6,1,3]
+
+			1. Start at j=2
+			2. Everything <j is sorted ([5] is sorted)
+			3. Insert key at j into sorted array.
+			4. 5>2, swap.
+			5. Input is now [2,5,4,6,1,3]
+			6. ++j
+			7. Everything <j is sorted ([2,5] is sorted)
+			8. Input key at j into sorted array.
+			9. 5>4, swap
+			10. 2<4, do nothing.    #end swapping on first do nothing for each loop
+			11. Input is now [2,4,5,6,1,3]
+			12. ++j
+			13. ...
+			  . [1,2,3,4,5,6]
+
+			Correctness: 
+				A loop invariant for insertion:
+					At the start of each iteration of the outer loop, the sub array A[1..j-1] consists of elements originally in A[1..j-1] but in sorted order
+				To use a loop invariant to prove correctness, we need to show
+					1) Initialization: it must be true before the 1st iteration of the loop
+					2) Maintenance: the loop invariant remains true before the next iteration
+					4) Termination: When the loop terminated the invariant gives a useful property that shows the algorithm is correct 
+
+			Cost: (refer to SortPsudocode.py for line numbers)
+				Line number |    Cost     | Number of times executed
+					2              c1               n
+					3              c2               n-1
+					4              c3=0				n-1
+					5              c4               n-1
+					6              c5               Sum for j=2 to n of tj
+					7              c6               (Sum for j=2 to n of tj) - 1
+					8              c7				(Sum for j=2 to n of tj) - 1
+					9              c8				n-1
+
+				- Line 2 takes a constant time c1
+				- for j=2,...,n let tj be the number of times the while loop is executed for value j
+				- while and for loop are executed one more than the loop body
+
+			Running time of algorithm: Sum for all statements (cost of statement * number of times statement is executed)
+			let T(n) be the running time for insertion sort: 
+				T(n) = c1(n) + c2(n-1) + c3(n-1) + c4(Sum for j=2 to n of tj) + ... + c8(n-1)
+			- Running time dependent on tj which is dependent on Input
+			- best case: n=1
+				array already sorted -> tj = 1
+				T(n) = an + b for constants a & b
+				T(n) is linear in n
+			- worst case: [6,5,4,3,2,1] (reverse sorted)
+				while loop terminates because i=0
+					tj = j
+				Sum for j=2 to n of tj ~= n(n+1)/2
+				T(n) = an^2 + bn +c for constants a b c
+				T(n) is quadratic in n
+
+
+	Analyzing algorithms:
+		- predict resources an algorithm uses
+			- memory
+			- time 
+			- power 
+			- # messages
+
+		Need a computational model
+
+Ch.3 Growth of Functions
+	Asymptotic Notation
+		O-Notation: THERE IS A LESSON ON KHAN
+			- O(g(n)) ε {f(n) | there exists positive constants c, n0 such that 0<=f(n)<=cg(n) for all n>=n0}
+			- Upper bound
+
+			Suppose we want to show 100n + 5 ε O(n). We need to find an n0 and a c.
+				100n + 5 <= 100n + n for all n>=5
+				100n + 5 <= 101n for all n>=5
+				n0 	= 5
+				c 	= 101
+
+				OR
+
+				100n + 5 <= 100n + 5n for all n>=1
+				n0	= 1
+				c 	= 105
+				
+
+			This definition gives a lot of freedom in choosing specific c and n0.
+
+		Ω-Notation:
+			- Ω(g(n)) ε {f(n) | there exists positive constants c, n0 such that 0<=cg(n)<=f(n) for all n>=n0}
+			- Lower bound
+			- Lower bound on sorting is nlogn
+
+			Suppose we want to show n^3 ε Ω(n^2)
+				n^3 <= n^2 for all n>=0
+				n0 	= 0
+				c 	= 1
+
+		Θ-Notation: 
+			- Θ(g(n)) ε {f(n) | there exists positive constants c1, c2, n0 such that 0<=c1g(n)<=f(n)<=c2g(n) for all n>=n0}
+			- Tight bound
+
+			(1/2)n(n-1) ε Θ(n^2)
+			First prove upper bound
+				(1/2)n(n-1) = (1/2)n^2 - (1/2)n <= 1/2(n^2) for all n>=0
+			Second prove lower bound
+				(1/2)n(n-1) = (1/2)n^2 - (1/2)n >= (1/2)(n^2) - (1/4)(n^2) for all n>=2
+
+			n0 	= 2
+			c2 	= 1/2
+			c1	= 1/4
+			0 <= (1/4)n^2 <= (1/2)n(n-1) <= (1/2)n^2
+
+	Using limits to compare orders of growth:
+		lim n->inf (f(n)/g(n)) = 	| inf 	=> f(n) has a larger order of growth than g(n)		f(n) ε Ω(g(n))
+									| c 	=> f(n) has the same order of growth as g(n)		f(n) ε Θ(g(n))				
+									| 0		=> f(n) has a smaller order of growth than g(n)		f(n) ε O(g(n))
+
+	Take advantage of techniques for computing limits 
+		l'Hopital's rule
+			lim n->inf (f(n)/g(n)) = lim n->inf (f'(n)/g'(n))
+		Stirling's formula
+			n! ~= sqrt(2πn)(n/e)^n for large values of n
+		Useful identities
+			a^-1 = 1/a
+			...
+
+	EX: Compare the order of growth of (1/2)n(n-1) and n^2
+		lim n->inf ((1/2)n(n-1))/n^2 	= (1/2) lim n->inf (n^2 - n)/n^2
+										= (1/2) lim n->inf (1-1/n)
+										= 1/2
+										Therefore, (1/2)n(n-1) ε Θ(n^2)
+
+	EX: log2(n) and sqrt(n)
+		lim n->inf log2(n)/sqrt(n) 	= lim n->inf log2(n)`/sqrt(n)`
+									= lim n->inf ((1/2)(log2(e)))/(1/(2sqrt(n)))
+									= log2(e) lim n->inf (1/n)(2sqrt(n))
+									= 2log2(e) lim n->inf sqrt(n)/n
+									= 2log2(e) lim n->inf 1/sqrt(n)
+									= 0
+									Therefore, log2(n) ε O(sqrt(n))
+
+	EX: n! and 2^n
+		lim n->inf (n!/2^n)	= lim n->inf ((sqrt(2πn)(n/e)^n)/2^n)
+							= lim n->inf sqrt(2πn)(n^n/(2^n*e^n))
+							= lim n->inf sqrt(2πn)(n/(2e))^n
+							= inf
+							Therefore, n! ε Ω(2^n)
+
+########
+g++ -o dest	target.cc -fopenmp
+
+Ch.4 Divide-and-Conquer
+	- divide problems into 1 or more subproblems of the same type
+	- conquer subproblems by solving them recursively (base case by brute force)
+	- combine subproblem solutions to give a solution to the original problem.
+
+	- use a recurrence to characterize the run time of a Divide-and-Conquer algorithm
+		- a function defined in terms of itself with 1 or more base cases
+
+	Ex: Compute the factorial function
+		f(0) 		= 1
+		f(n >= 1) 	= n*f(n-1)
+
+		The basic operation of the algorithm is multiplication. Let M(n) be the number of multiplications made
+			M(0) 		= 0
+			M(n >= 1) 	= 1 + M(n-1)
+						= 1 + (1 + M(n-2))
+						= 1 + (1 + (1 + M(n-3))) 
+						= i + M(n-i)
+						set i = n
+						= n + M(n-n)
+						= n + M(0)
+						= n 
+
+	EX: Towers of Hanoi
+		- number of disks is n, moving 1 disk is the basic operation
+		- number of moves is M(n)
+			M(1) 	= 1
+			M(n) 	= M(n-1) + 1 + M(n-1)
+					= 2M(n-1) + 1 
+					= 2(2M(n-2) + 1) + 1
+					= 2^2M(n-2) + 2 + 1
+					= 2^2(2M(n-3) + 1) + 2 + 1
+					= 2^3M(n-3) + 2^2 + 2^1 + 2^0
+					= 2^iM(n-i) + 2^(i-1) + 2^(i-2) + ... + 2^0
+					set i = n-1
+					= 2^(n-1)M(1) + 2^(n-1) - 1
+					= 2^(n-1)*2^(n-1) - 1
+					= 2^n - 1
+
+	EX: Given a positive integer n in base 10, find the number of digits in it's base 2 representation
+		psudocode in file (def binRep)
+
+		Set up recurrence A(n) for the number of additions made by algorithm
+			A(1) = 0
+			A(n) = A(floor(n/2)) + 1 for n>=1
+
+		Consider n = 2^k
+			A(2^k) 	= A(2^(k-1)) + 1
+					= A(2^(k-2)) + 1 + 1
+					= A(2^(k-2)) + 2
+					= A(2^(k-3)) + 1 + 2
+					= A(2^(k-3)) + 3
+					= A(2^(k-i)) + i
+					set i = k
+					= A(2^(k-k)) + k
+					= A(1) + k
+					= k
+
+				k = log2(n)
+				By the smoothness rule this applies for all n
+
+	In general, in a Divide-and-Conquer approach, an instance of size n is divided into b instances or size n/b and a of them need to be solved. (a and b are constants, a >= 1, b > 1). 
+	Assuming n is a power of b, we get a recurrence of the form
+		T(n) = a*T(n/b) + f(n)
+							^ accounting for "divide" and/or "combine" step 
+
+	Master Theorem: If f(n) = O(n^d) with d >= 0 in the recurrence equation
+		T(n) = a*T(n/b) + f(n) 
+	then 
+		T(n) = 	| O(n^d) if a < b^d
+				| O(n^(d)log(n)) if a = b^d
+				| O(n^(logb(a))) if a > b^d
+
+		Factorial: Not of the form T(n) = aT(n/b) + f(n)
+
+		Binary Digits: A(n) = A(n/2) + 1 
+			a = 1
+			b = 2
+			d = 0
+			1 = 2^0
+			so A(n) = O(n^(0)log(n)) = O(log(n))
+
+		T(n) = 3T(n/2) + n
+			a = 3
+			b = 2
+			d = 1
+			so T(n) = O(n^log2(3))
+
+		T(n) = 3T(n/4) + n^5
+			a = 3
+			b = 4
+			d = 5
+			so T(n) = O(n^5)
+
+	Sorting algorithms:
+		Mergesort:
+			- a sorting algorithm based on Divide-and-Conquer
+
+			1) Divide the problem into 2 subproblem of approximately equal size (mid = floor((l+r)/2))
+			2) Mergesort both sides
+			3) Combine (cannot be done in place)
+
+			Almost all work done in combine step 
+
+			base) r-l=0 is sorted 
+
+			T(n) = 2T(n/2) + n
+			T(1) = 1
+				a = 2
+				b = 2
+				d = 1
+				2 = 2^1
+				SO O(nlog(n))
+
+		Quicksort:
+			- also this
+			
+			quicksort [] = []
+			quicksort (x:xs) = smaller ++ [x] ++ bigger
+				where
+					smaller = quicksort (filter (<x) xs)
+					bigger = quicksort (filter (>=x) xs)
+
+			Almost all work done in partition (divide) step 
+
+			WITHOUT CAREFULLY CHOOSING PIVOT: 
+				T(n) = T(n-1) + f(n), f(n) = O(n), T(n) = O(n^2)
+				T(0) = 0
+				T(1) = c
+
+			IF PIVOT IS MEDIAN:
+				T(n) = 2T(n/2) + f(n), f(n) = O(n), f(n) both computes pivot and does partition
+				T(n) = O(nlogn)
+
+Data structures: 
+	Heap:
+		EVERYTHING IN THIS ASSUMES A 1-INDEXED ARRAY AND HEAP
+		- A heap data structure is a nearly complete binary tree
+			- complete binary tree: every interior node has 2 children
+			- nearly complete binary tree: every interior node except the last level has 2 children
+			- represented & stored in an array (read as 1 indexed array)
+				- root = array[1]
+				- ith node = array[i]
+					- left child = array[2i]
+					- right child = array[2i+1]
+					- parent = array[i/2]
+			- height of tree is log2(n)
+		- there *can* be heaps with k-axry trees, where each node has k children.
+
+		Properties: FOR MAX-HEAPS
+			- the largest element is at the root
+			- for all nodes i excluding the root, the parent of i must be bigger or equal to i
+			- ARRAY REPRESENTATION: |16|14|10|8|7|9|3|2|4|1|
+			- NOT A SEARCH TREE
+
+			Max-HEAPIFY(A, i, n)
+				l = left(i)
+				r = right(i)
+				if (l<=n and A[l]>A[i]) 
+					largest = l
+				else
+					largest = i
+				if (r<=n and A[r] > A[largest])
+					largest = r
+				if (largest != i)
+					exchange A[i] with A[largest]
+					Max-HEAPIFY(A, largest, n)
+
+		Building a heap: [4,1,3,2,16,9,10,14,8,7] -> [16,14,10,8,7,9,3,2,4,1]
+			- Given an unordered array, produce a (max) heap
+			- go from back to front (for i in n to 0 do)
+			- first node that is not a leaf is at floor(n/2)
+
+			for i from floor(n/2) to 0 do
+				Max-HEAPIFY(A, i, n)
+
+			O(nlogn)
+
+		Deleting the root:
+			- delete the root, put the nth node there (n=size of tree before deletion)
+			- Max-HEAPIFY(A, 1, n-1)
+
+
+
+Her grades are based entirely on magic. Also stack ranking.
+
+CH.2 Getting Started:
+	Sorting:
+		The sorting problem:
+			Input   - A sequence of n numbers <a_1, a_2, ..., a_n>
+			Output  - A permutation of the sequence <a_1`, a_2`, ..., a_n`> such that a_1` <= a_2' <= ... <= a_n`
+
+		Insertion sort: (1-indexed for simplicity)
+			Input   - [5,2,4,6,1,3]
+
+			1. Start at j=2
+			2. Everything <j is sorted ([5] is sorted)
+			3. Insert key at j into sorted array.
+			4. 5>2, swap.
+			5. Input is now [2,5,4,6,1,3]
+			6. ++j
+			7. Everything <j is sorted ([2,5] is sorted)
+			8. Input key at j into sorted array.
+			9. 5>4, swap
+			10. 2<4, do nothing.    #end swapping on first do nothing for each loop
+			11. Input is now [2,4,5,6,1,3]
+			12. ++j
+			13. ...
+			  . [1,2,3,4,5,6]
+
+			Correctness: 
+				A loop invariant for insertion:
+					At the start of each iteration of the outer loop, the sub array A[1..j-1] consists of elements originally in A[1..j-1] but in sorted order
+				To use a loop invariant to prove correctness, we need to show
+					1) Initialization: it must be true before the 1st iteration of the loop
+					2) Maintenance: the loop invariant remains true before the next iteration
+					4) Termination: When the loop terminated the invariant gives a useful property that shows the algorithm is correct 
+
+			Cost: (refer to SortPsudocode.py for line numbers)
+				Line number |    Cost     | Number of times executed
+					2              c1               n
+					3              c2               n-1
+					4              c3=0				n-1
+					5              c4               n-1
+					6              c5               Sum for j=2 to n of tj
+					7              c6               (Sum for j=2 to n of tj) - 1
+					8              c7				(Sum for j=2 to n of tj) - 1
+					9              c8				n-1
+
+				- Line 2 takes a constant time c1
+				- for j=2,...,n let tj be the number of times the while loop is executed for value j
+				- while and for loop are executed one more than the loop body
+
+			Running time of algorithm: Sum for all statements (cost of statement * number of times statement is executed)
+			let T(n) be the running time for insertion sort: 
+				T(n) = c1(n) + c2(n-1) + c3(n-1) + c4(Sum for j=2 to n of tj) + ... + c8(n-1)
+			- Running time dependent on tj which is dependent on Input
+			- best case: n=1
+				array already sorted -> tj = 1
+				T(n) = an + b for constants a & b
+				T(n) is linear in n
+			- worst case: [6,5,4,3,2,1] (reverse sorted)
+				while loop terminates because i=0
+					tj = j
+				Sum for j=2 to n of tj ~= n(n+1)/2
+				T(n) = an^2 + bn +c for constants a b c
+				T(n) is quadratic in n
+
+
+	Analyzing algorithms:
+		- predict resources an algorithm uses
+			- memory
+			- time 
+			- power 
+			- # messages
+
+		Need a computational model
+
+Ch.3 Growth of Functions
+	Asymptotic Notation
+		O-Notation: THERE IS A LESSON ON KHAN
+			- O(g(n)) ε {f(n) | there exists positive constants c, n0 such that 0<=f(n)<=cg(n) for all n>=n0}
+			- Upper bound
+
+			Suppose we want to show 100n + 5 ε O(n). We need to find an n0 and a c.
+				100n + 5 <= 100n + n for all n>=5
+				100n + 5 <= 101n for all n>=5
+				n0 	= 5
+				c 	= 101
+
+				OR
+
+				100n + 5 <= 100n + 5n for all n>=1
+				n0	= 1
+				c 	= 105
+				
+
+			This definition gives a lot of freedom in choosing specific c and n0.
+
+		Ω-Notation:
+			- Ω(g(n)) ε {f(n) | there exists positive constants c, n0 such that 0<=cg(n)<=f(n) for all n>=n0}
+			- Lower bound
+			- Lower bound on sorting is nlogn
+
+			Suppose we want to show n^3 ε Ω(n^2)
+				n^3 <= n^2 for all n>=0
+				n0 	= 0
+				c 	= 1
+
+		Θ-Notation: 
+			- Θ(g(n)) ε {f(n) | there exists positive constants c1, c2, n0 such that 0<=c1g(n)<=f(n)<=c2g(n) for all n>=n0}
+			- Tight bound
+
+			(1/2)n(n-1) ε Θ(n^2)
+			First prove upper bound
+				(1/2)n(n-1) = (1/2)n^2 - (1/2)n <= 1/2(n^2) for all n>=0
+			Second prove lower bound
+				(1/2)n(n-1) = (1/2)n^2 - (1/2)n >= (1/2)(n^2) - (1/4)(n^2) for all n>=2
+
+			n0 	= 2
+			c2 	= 1/2
+			c1	= 1/4
+			0 <= (1/4)n^2 <= (1/2)n(n-1) <= (1/2)n^2
+
+	Using limits to compare orders of growth:
+		lim n->inf (f(n)/g(n)) = 	| inf 	=> f(n) has a larger order of growth than g(n)		f(n) ε Ω(g(n))
+									| c 	=> f(n) has the same order of growth as g(n)		f(n) ε Θ(g(n))				
+									| 0		=> f(n) has a smaller order of growth than g(n)		f(n) ε O(g(n))
+
+	Take advantage of techniques for computing limits 
+		l'Hopital's rule
+			lim n->inf (f(n)/g(n)) = lim n->inf (f'(n)/g'(n))
+		Stirling's formula
+			n! ~= sqrt(2πn)(n/e)^n for large values of n
+		Useful identities
+			a^-1 = 1/a
+			...
+
+	EX: Compare the order of growth of (1/2)n(n-1) and n^2
+		lim n->inf ((1/2)n(n-1))/n^2 	= (1/2) lim n->inf (n^2 - n)/n^2
+										= (1/2) lim n->inf (1-1/n)
+										= 1/2
+										Therefore, (1/2)n(n-1) ε Θ(n^2)
+
+	EX: log2(n) and sqrt(n)
+		lim n->inf log2(n)/sqrt(n) 	= lim n->inf log2(n)`/sqrt(n)`
+									= lim n->inf ((1/2)(log2(e)))/(1/(2sqrt(n)))
+									= log2(e) lim n->inf (1/n)(2sqrt(n))
+									= 2log2(e) lim n->inf sqrt(n)/n
+									= 2log2(e) lim n->inf 1/sqrt(n)
+									= 0
+									Therefore, log2(n) ε O(sqrt(n))
+
+	EX: n! and 2^n
+		lim n->inf (n!/2^n)	= lim n->inf ((sqrt(2πn)(n/e)^n)/2^n)
+							= lim n->inf sqrt(2πn)(n^n/(2^n*e^n))
+							= lim n->inf sqrt(2πn)(n/(2e))^n
+							= inf
+							Therefore, n! ε Ω(2^n)
+
+########
+g++ -o dest	target.cc -fopenmp
+
+Ch.4 Divide-and-Conquer
+	- divide problems into 1 or more subproblems of the same type
+	- conquer subproblems by solving them recursively (base case by brute force)
+	- combine subproblem solutions to give a solution to the original problem.
+
+	- use a recurrence to characterize the run time of a Divide-and-Conquer algorithm
+		- a function defined in terms of itself with 1 or more base cases
+
+	Ex: Compute the factorial function
+		f(0) 		= 1
+		f(n >= 1) 	= n*f(n-1)
+
+		The basic operation of the algorithm is multiplication. Let M(n) be the number of multiplications made
+			M(0) 		= 0
+			M(n >= 1) 	= 1 + M(n-1)
+						= 1 + (1 + M(n-2))
+						= 1 + (1 + (1 + M(n-3))) 
+						= i + M(n-i)
+						set i = n
+						= n + M(n-n)
+						= n + M(0)
+						= n 
+
+	EX: Towers of Hanoi
+		- number of disks is n, moving 1 disk is the basic operation
+		- number of moves is M(n)
+			M(1) 	= 1
+			M(n) 	= M(n-1) + 1 + M(n-1)
+					= 2M(n-1) + 1 
+					= 2(2M(n-2) + 1) + 1
+					= 2^2M(n-2) + 2 + 1
+					= 2^2(2M(n-3) + 1) + 2 + 1
+					= 2^3M(n-3) + 2^2 + 2^1 + 2^0
+					= 2^iM(n-i) + 2^(i-1) + 2^(i-2) + ... + 2^0
+					set i = n-1
+					= 2^(n-1)M(1) + 2^(n-1) - 1
+					= 2^(n-1)*2^(n-1) - 1
+					= 2^n - 1
+
+	EX: Given a positive integer n in base 10, find the number of digits in it's base 2 representation
+		psudocode in file (def binRep)
+
+		Set up recurrence A(n) for the number of additions made by algorithm
+			A(1) = 0
+			A(n) = A(floor(n/2)) + 1 for n>=1
+
+		Consider n = 2^k
+			A(2^k) 	= A(2^(k-1)) + 1
+					= A(2^(k-2)) + 1 + 1
+					= A(2^(k-2)) + 2
+					= A(2^(k-3)) + 1 + 2
+					= A(2^(k-3)) + 3
+					= A(2^(k-i)) + i
+					set i = k
+					= A(2^(k-k)) + k
+					= A(1) + k
+					= k
+
+				k = log2(n)
+				By the smoothness rule this applies for all n
+
+	In general, in a Divide-and-Conquer approach, an instance of size n is divided into b instances or size n/b and a of them need to be solved. (a and b are constants, a >= 1, b > 1). 
+	Assuming n is a power of b, we get a recurrence of the form
+		T(n) = a*T(n/b) + f(n)
+							^ accounting for "divide" and/or "combine" step 
+
+	Master Theorem: If f(n) = O(n^d) with d >= 0 in the recurrence equation
+		T(n) = a*T(n/b) + f(n) 
+	then 
+		T(n) = 	| O(n^d) if a < b^d
+				| O(n^(d)log(n)) if a = b^d
+				| O(n^(logb(a))) if a > b^d
+
+		Factorial: Not of the form T(n) = aT(n/b) + f(n)
+
+		Binary Digits: A(n) = A(n/2) + 1 
+			a = 1
+			b = 2
+			d = 0
+			1 = 2^0
+			so A(n) = O(n^(0)log(n)) = O(log(n))
+
+		T(n) = 3T(n/2) + n
+			a = 3
+			b = 2
+			d = 1
+			so T(n) = O(n^log2(3))
+
+		T(n) = 3T(n/4) + n^5
+			a = 3
+			b = 4
+			d = 5
+			so T(n) = O(n^5)
+
+	Sorting algorithms:
+		Mergesort:
+			- a sorting algorithm based on Divide-and-Conquer
+
+			1) Divide the problem into 2 subproblem of approximately equal size (mid = floor((l+r)/2))
+			2) Mergesort both sides
+			3) Combine (cannot be done in place)
+
+			Almost all work done in combine step 
+
+			base) r-l=0 is sorted 
+
+			T(n) = 2T(n/2) + n
+			T(1) = 1
+				a = 2
+				b = 2
+				d = 1
+				2 = 2^1
+				SO O(nlog(n))
+
+		Quicksort:
+			- also this
+			
+			quicksort [] = []
+			quicksort (x:xs) = smaller ++ [x] ++ bigger
+				where
+					smaller = quicksort (filter (<x) xs)
+					bigger = quicksort (filter (>=x) xs)
+
+			Almost all work done in partition (divide) step 
+
+			WITHOUT CAREFULLY CHOOSING PIVOT: 
+				T(n) = T(n-1) + f(n), f(n) = O(n), T(n) = O(n^2)
+				T(0) = 0
+				T(1) = c
+
+			IF PIVOT IS MEDIAN:
+				T(n) = 2T(n/2) + f(n), f(n) = O(n), f(n) both computes pivot and does partition
+				T(n) = O(nlogn)
+
+Data structures: 
+	Heap:
+		EVERYTHING IN THIS ASSUMES A 1-INDEXED ARRAY AND HEAP
+		- A heap data structure is a nearly complete binary tree
+			- complete binary tree: every interior node has 2 children
+			- nearly complete binary tree: every interior node except the last level has 2 children
+			- represented & stored in an array (read as 1 indexed array)
+				- root = array[1]
+				- ith node = array[i]
+					- left child = array[2i]
+					- right child = array[2i+1]
+					- parent = array[i/2]
+			- height of tree is log2(n)
+		- there *can* be heaps with k-axry trees, where each node has k children.
+
+		Properties: FOR MAX-HEAPS
+			- the largest element is at the root
+			- for all nodes i excluding the root, the parent of i must be bigger or equal to i
+			- ARRAY REPRESENTATION: |16|14|10|8|7|9|3|2|4|1|
+			- NOT A SEARCH TREE
+
+			Max-HEAPIFY(A, i, n)
+				l = left(i)
+				r = right(i)
+				if (l<=n and A[l]>A[i]) 
+					largest = l
+				else
+					largest = i
+				if (r<=n and A[r] > A[largest])
+					largest = r
+				if (largest != i)
+					exchange A[i] with A[largest]
+					Max-HEAPIFY(A, largest, n)
+
+		Building a heap: [4,1,3,2,16,9,10,14,8,7] -> [16,14,10,8,7,9,3,2,4,1]
+			- Given an unordered array, produce a (max) heap
+			- go from back to front (for i in n to 0 do)
+			- first node that is not a leaf is at floor(n/2)
+
+			for i from floor(n/2) to 0 do
+				Max-HEAPIFY(A, i, n)
+
+			O(nlogn)
+
+		Deleting the root:
+			- delete the root, put the nth node there (n=size of tree before deletion)
+			- Max-HEAPIFY(A, 1, n-1)
+
+		HeapSort:
+			- Sorting in increasing order
+
+			for i from 0 to n-1
+				Swap 1 with n-i
+				Max-HEAPIFY(A, 1, n-i)
+
+			O(nlogn)
+
+	Priority queues:
+		- maintain a dynamic set of elements
+		- each element in the set has a key
+		- supports the following operations
+			- INSERT(S, x) inserts x into S
+			- MAXIMUM(S) finds the element of S with the largest key
+			- EXTRACT-MAX(S) removes and returns the element of S with the largest key
+			- INCREASE-KEY(S, x, k) increases the value of x's key TO k
+
+Lower Bound on comparison based sorting
+	Many important algorithms work by comparing items. We study the performance of such algorithms using a decision tree. 
+
+	Example: Find the minimum of 3 distinct numbers: a, b, c
+		if (a < b) {
+			if (a < c) {
+				return a
+			}
+			else {
+				return c
+			}
+		} else {
+			if (b < c) {
+				return b
+			}
+			else {
+				return c
+			}
+		}
+
+			Each internal node of the decision tree is a comparison
+				- if the comparison results in a result of true, move into the left outer tree, otherwise we move into the right subtree
+				- each leaf represents a possible outcome of the algorithms seen on some input of size n
+				- the number of leaves can be larger than the number of outcomes 
+				- the number of leaves must be at least as large as the number of possible outcomes
+				- the number of comparisons in the worst case is equal to the height of the decision tree
+			A tree with a given number of leaves has to be tall enough to have that many leaves
+				- for any binary tree with l leaves for height h is h >= ceiling(log2l)
+				- this places a lower bound on the height of decision trees and therefore on the worst case number of comparisons.
+
+				log2(n!) 	~= log2(sqrt(2pin)(n/e)^n)
+							=  nlog2(n) - nlog(e) + log2n/2 + log2(2pi)
+							~= nlog2(n)
+
+	
+CH.9 Medians and Order Statistics
+	The selection problem
+		Input: A set A of n distinct integers and an integer i, 1<=i<=n
+
+		Output: The element x from A that is larger than exactly i-1 other elements.
+
+		i=1 is minimum
+		i=n is maximum 
+		i=(n+1)/2 when n is odd (midpoint is unique) is median
+		i=n/2 when n is even is lower median (this is usually used)
+		i=n/2 + 1 when n is even is upper median
+
+		select(A, n, i):
+			1) Divide the elements into groups of 5. 
+				- there will be ceiling(n/5) groups, 
+				- and floor(n/5) groups with exactly 5 elements, 
+				- and 1 group with n%5 elements assuming n is not divisible by 5.
+			2) Find the median of each group. 
+				- using something like insertion sort
+				- Takes constant time because every group has <=5 elements
+				- median is the 3rd element.
+			3) Find the median x of the meadianS of the groups
+			4) Partition array based on x 
+				- | <x      | x |      >x |
+			5) Now there are 3 possabilities
+				1) i = p where p = index of x: return x
+				2) i < p: return ith smallest in the left side of the partition
+				3) i > p: return i-pth smallest in the right side of the partition
+
+		Analysis
+			Start by getting a lower bound on the number of elements larger than x.
+				- at least half of medians are >x
+				- look at the groups containing medians >x
+					- at least 3 elements in every group is >x
+					- ignore the group with x and the group with <5 elements
+				- >= ceiling(n/5)/2 - 2 groups with 3 elements >x
+				SO at least 3(ceiling(n/5)/2 - 2) >= 3n/10 - 6 elements > x
+				Symmetrically, number of elements < x is at least 3n/10 - 6
+				Therefore, when we call select in step 5 it's on 7n/10 + 6 elements
+			Recurrence for worst case:
+				- Steps 1, 2, and 4 are O(n)
+				- Step 3 is T(ceiling(n/5))
+				- Step 5 is <= T(7n/10 - 6)
+				T(n) = {O(1) 								 , n<70; 
+						T(ceiling(n/5)) + T(7n/10 - 6) + O(n), otherwise}
+
+Ch.11 HASH TABLES
+	If the universe U is large, storing a table of size U may be impractical. 
+	Often, the set of keys K stored is small so that most of the space in the table is wasted. With hashtables we can reduce the space to O(|K|), and we can still get O(1) time for insert, search, delete on average, but not in worst case.
+
+	Instead of storing element with key K in position K, use a function h and store the element in position h(k)
+		- h is called a hash function
+			h: U->{0,1,...,m-1} st h(k) is a valid position in the table 
+
+	Collision: when >=2 keys hash to the same position.
+		- 2 methods to handle collisions.
+			- separate chaining
+				Put all elements that hash to the same position in an unordered linked list 
+
+				Analysis of hashing with separate chaining
+					- Given a key, how long does it take to find an element with that key? (or determine it does not exist)
+					- load factor: α = n/m; n = number of elements in table; m = size of table
+					- α is the average number of keys per linked list, can be <1, =1, >1.
+					- worst case, all keys hash to the same position. In that case, time to search is O(n)
+					- average case, depends on how well the hash function distributes keys. 
+
+					Assume simple uniform hashing (any key not already in the table is equally likely to hash to any position)
+						- for j = 0, 1, ..., m-1 denote the length of T[j] by nj
+							n = n0 + n1 + ... + n(m-1)
+						- average value of nj = E[nj] = α = n/m
+					Assume we can compute h(k) in O(1) so time required to search is α.
+				Theorem: An unsuccessful search is O(α)
+				Theorem: Expected time for a successful search is O(α)
+
+			- open addressing
+				An alternative way to handle collisions: We store all keys in the hash table itself. (must be a size that is prime)
+				h(k) = k mod 11 (EXAMPLE)
+							  |
+							 Prime
+							 Table size
+							 keys * 2 rounded up to the nearest prime
+
+				key: 11
+				h(key) = 0
+				inset(11, 0)
+				key: 13
+				h(key) = 2
+				insert(13, 2)
+				key: 22
+				h(key) = 0 //0 is taken, try 1
+				insert(22,1)
+				key: 33
+				h(key) = 0 //0 is taken try 1, 1 is taken try 2, 2 is taken try 3
+				insert(33, 3)
+
+				Probe sequence to insert and search and delete must be identical and must at some point hit every position on the table. 
+					- Linear probing: starts at h(k), continues sequentially through the table, wrapping after (m-1) back to 0.
+						- suffers from primary clustering
+				Must use different symbol for "empty slot" and "delted entry"
+
+Project2:
+	allocate type var [len] value
+			   |   |    |_______________ only if type = char
+	  {int, char}  {name/identifier}
+
+	hash fucntion : sum i=0 to n-1 (ascii(symbol_i)) mod table size
+
+Balanced search trees:
+	Two general approaches for handling unbalanced trees:
+		- Transform an unbalanced tree into a balanced one
+			- AVL, red-black trees, splay 
+		- Allow more than one key value in a node
+			- 2-3 trees, B-trees
+	AVL trees:
+		balance factor - the difference in height of the left subtree and the right subtree of a node
+		AVL tree - binary search tree w/ a balance factor of -1, 0, or 1 at every node in a tree 
+
+		Fixed using rotations: 
+			- if an insertion/deletion makes the avl tree unbalanced, we transform the tree by a rotation 
+				- local transformation rooted at the node whoes balance factor is 2 or -2
+			- 4 rotations
+				- right rotation (heavy on the left) 
+				- left rotation (heavy on the right)
+				- double left right
+				- double right left 
+
+	2-3 trees:
+		A 2-3 tree can have 2 kinds of nodes:
+			- a 2 node: node with 2 children
+			- a 3 node: 2 values per node, 3 children. First child is all below first value, second child is all between two values, third child is all greater than second value.
+
+		All leaves must be at the same level.
+
+		I don't understand this one.
+
+	red-black trees:
+		A red-black tree is a BST that satisfies:
+			1) Every node is either red or black 
+			2) The root is black
+			3) Every leaf (nil) is black - Do not understand what this rule is for because nil is dumb.
+			4) If a node is red, both it's children must be black
+			5) For each node, it must be the case that every simple path from the node to decedent leaves must have the same number of black nodes.
+
+		Lemma: A red-black tree with n internal nodes has height at most 2log(n+1)
+
+		Insertion/deletions may result in the RB properties being violated
+			- may need to change node color 
+			- may need to restructure tree through a rotation
+
+			- CASE 1: z (newly inserted red node)'s uncle and parent is red and z is a right child
+				NO STRUCTURAL CHANGES.
+				recolor parent, uncle, and grandparent.
+			- CASE 2: z (newly inserted red node)'s uncle and parent is red and z is a left child
+				NO STRUCTURAL CHANGES.
+				recolor parent, uncle, and grandparent and label grandparent as new z.
+			- CASE 3: z's uncle is black and z is a right child
+				RESTRUCTURE TREE SUCH THAT
+					z is now the parent, and it's parent is it's left child
+					former left subtree of z is now right subtree of it's parent.
+				GOTO CASE 4.
+			- CASE 4: z's uncle is black and z is a left child  
+				RESTRUCTURE TREE SUCH THAT
+					z is now it's (current) parent's parent, it's (old) parent is it's left child, and it's (new) parent is it's right child.
+					z's right child is now it's (new) parent's left child. 
+				RECOLOR TREE SUCH THAT
+					z is now black, both it's children are red. 
+
+Dynamic Programming: 
+	A technique used for solving optimization. (memoization)
+
+	Rod Cutting: 
+		Input: 
+			A rod of length n
+			a table of prices p_i, i = 1,...,n
+		Output:
+			The maximum revenue obtained for rods whose lengths sum to n
+
+		EX:
+			length i  1 2 3 4 5  6  7  8
+			price  pi 1 5 8 9 10 17 17 20
+
+		We can determine maximum revenue rn by taking the maximum of:
+			- pn, price by not making a cut
+			or r1 + r(n-1)
+			or r2 + r(n-2)
+			...
+			or r(n-1) + r1
+
+			i.e. rn = (pn, r1 + r(n-1), r2 + r(n-2), ..., r(n-1) + r1)
+
+		Optimal substructure: To solve the original problem of size n, solve subproblems of smaller sizes.
+			- after making a cut, we have 2 subproblems
+			- optimal solution to the original problem incorporates optimal solutions to the subproblems
+
+		EX (cont.): 
+			n = 7; 3, 2, 2 is correct solution.
+
+		Recursive top down solution (direct implementation of rn):
+			def CutRod(p, n): # p is array of prices, n is length of rod
+				if (n = 0):
+					return 0
+				else:
+					q = p[n]
+					for i from 1 to n-1:
+						q = max(q, p[i] + CutRod(p, n-i))
+
+			i | #calls to CutRod(i)
+			0 | 8
+			1 | 4
+			2 | 2
+			3 | 1
+			4 | 1
+
+		2 approaches:
+			1) top-down with memoization
+				TDCutRod(p,n):
+					let revenue[0..n] be a table to hold revenues.
+					for (i=0; i <= n; i++) 
+						revenue[i] = -inf //hasn't been computed yet
+					return TD-CR(p, revenue, n)
+				TD-CR(p, revenue, n):
+					if (revenue[n] >= 0) 
+						return revenue[n]
+					if (n==0) 
+						q=0
+					else
+						q = -inf
+						for (i=1;i<=n;i++)
+							q = max(q, p[i] + TD-CR(p, revenue, n-i))
+					revenues[n] = q
+					return q
+			2) bottom-up with memoization
+				BU-CR(p,n):
+					let revenue[0..n] be a table to hold revenues.
+					revenue[0] = 0
+					for (i=1; i<=n; i++) 
+						q = -inf
+						for (j=1, j<=i, j++)
+							q = max(q, p[j] + revenue[i-j])
+						revenue[i] = q
+					return revenue[n]
+
+				i 			0 1 2 3  4  5  6  7  8 
+				p[i]		0 1 5 8  9 10 17 17 20
+				revenue[i]	0 1 5 8 10 13 17 18 22
+
+	Weighted Interval Scheduling
+		Input: Given n intervals, each with a start time si, a finish time fi, and a value vi, 1<=i<=n. Two intervals are compatible if they don't overlap.
+		p(n) = the index of the item with the highest fi that item n could come after
+		Output: A subset S of [1,..,n] of mutually compatible intervals where the (sum of values (i in S) vi) is maximized 
+
+		Suppose O is an optimal schedule. Either:
+			- The interval belongs to O. 
+			- The interval does not belong to O.
+		If n in O then no interval between p(n) and n can be in the optimal solution.
+		Moreover, if n in O then O must include an optimal solution to the problem with intervals {1..p(n)}
+		If n not in O then O is equal to the optimal solution to the problem with intervals {1..n-1}
+		let OPT(j) denote the value of the optimal solution on the intervals {1..j}
+		OPT(j) = max(vj + OPT(p(j)), OPT(j-1))
+		Compute-OPT(j) {
+			if (j<=0) return 0
+			else return max(vj+Compute-OPT(p(j)), Compute-OPT(j-1))
+		}
+		Iterative-CO(j) {
+			M[0] = 0 //M is the memoization (one dimensional)
+			for (i=1; i<=j; i++) {
+				M[i] = max(M[i-1], v_i + M[p(i)])
+			}
+			return M[j]
+		}
+
+	Knapsack Problem:
+		Input: Given n items of weights w1..wn and values v1..vn and a knapsack of capacity W
+		Output: The most valuable set of items that can fit in the knapsack.
+		V[i,j] = max(vi + V[i-1, j-wi], V[i-1, j])
+
+Greedy Algorithms:
+	Often used to solve optimization problems
+		- almost always iterative algorithms
+		- in each iteration we make a locally greedy choice
+			- decision irrevocable
+		- hope the local choice yields a global optimum overall
+	Interval Scheduling
+		- job j starts at sj and finishes at fj
+		- two jobs are compatible if they don't overlap
+		- find the maximum number of mutually compatible jobs
+
+		Greedy selection:
+			- select in order by start time: earliest start time first
+				- trivial counterexample
+			- consider jobs in order of fj-sj: smallest interval first
+				-----------  -----------
+ 						  ----
+			- for each job, count the number of conflicting jobs: smallest number of conflicts first
+				---- ---- ---- ----
+				   ---  ---  ---
+				   ---       ---
+				   ---       ---
+				   ---
+			- select in ascending order of finish time: earliest finish time first
+				Finish-Time-First(n, S, F): // n jobs, with start times S and finish times F
+					// sorts by finish time f1 <= f2 <=...<= fn
+					QuickSort(n, F)
+
+					A = F[1] //A is set of jobs trying to construct
+					for j=2 to n:
+						//if job j is compatible
+						if f(j-1) <= sj: A = A U F[j]
+					return A
+
+				We want to show that the greedy algorithm returns an optimal set of intervals, A
+					- let O be an optimal set of intervals
+					- show that |A| = |O| because there may be several optimal solutions
+
+					Let i1, ..., ik be the set of intervals in A in the order they're added to A, |A| = k
+					Similarly, let O be the set of intervals j1,...,jm (ordered left to right)
+						- goal: show m = k
+
+						Greedy: 	---i1--- -i2- ... --ir--| -i(r+1)-   | ... ---ik---|
+						Optimal:	---j1--- -j2- ... --jr--|  --j(r+1)--| ...    --jm-|
+
+						Intervals in O are compatible
+							- order of the start times have the same order as finish times
+						Show for each r>=1, the rth interval in the algorithm's schedule finishes no later than the rth interval in the optimal schedule
+
+						Theorem: For all indices r <= k, we have f[ir] <= f[jr]
+						Proof: (induction)
+							for r = 1, the statement is true. The algorithm selects i1, with minimum finish time.
+							for r > 1: Assume the induction hypothesis holds for r-1. Try to prove for r.
+								Greedy: ------ir-1-----    | |--ir---  |
+								Optimal      ------jr-1----| |  ---jr--|
+								By induction hypothesis, f(ir-1) <= f(jr-1)
+								In order for the algorithm's rth interval to not finish earlier, it would need to fall behind. This cannot happen.
+
+Graphs:
+	A graph G=(V,E) is given by a set of vertices V and a set of edges E.
+		- Each edge is given by e=(u,v) in E; u,v in V
+		- edges can be directed or undirected. In project edges are directed.
+
+	Two common representations: 
+		- adjacency matrix (|V| x |V|)
+			|1|-|2|            1 2 3 4 5      aij = 1 if (i,j) in E, 0 otherwise
+			 | / |  \        1 0 1 1 0 0      if the graph is undirected, it is symmetric about the main diagonal 
+			|3|-|4|-|5|      2 1 0 1 1 1	  if it is not, the graph may or may not be symmetric.
+							 3 1 1 0 1 0
+							 4 0 1 1 0 1
+							 5 0 1 0 1 0
+
+			|1|->|2|		   1 2 3 4
+			 ^  ^ |			 1 0 1 0 0
+			 | /  v          2 0 0 0 1
+			|3|<-|4|o        3 1 1 0 0
+							 4 0 0 1 1
+		- adjacency list //this is so much better than the maple version. Like holy shit.
+			[]->[2|]
+			[]->[4|]
+			[]->[1]->[2|]
+			[]->[3]->[4|]
+			n=|V|
+			m=|E|
+			O(n+m) space
+
+	Degree of a vertex: 
+		d+ - how many outgoing
+		d- - how many incoming
+		d  - how many
+
+Project 3 informations:
+	Citation data:
+		form: 
+			from to
+	Dates:
+		form: 
+			citation:int yyyy 
+
+		needs a int->int mapping function from citation to index 
+
+Tree transversal:
+	DFS:
+
+		Input: 
+			G(V,E), directed or undirected
+		Output: 
+			Two timestamps for each vertex v: 
+				v.disc = discovery time (first time visited)
+				v.exit = exit time (last time visited) 
+
+		DFS(G):
+			for every u in V 
+				u.color = WHITE;
+			time = 0;
+			for each u in V:
+				if (u.color == WHITE):
+					VISIT(G, u)
+
+		VISIT(G, u):
+			time++;
+			u.disc = time;
+			u.color = GREY;
+			for every v adjecent to u:
+				if (v.color == WHITE):
+					VISIT(G, v)
+			time++;
+			u.exit = time;
+			u.color = BLACK;
+
+Spanning trees: 
+	A spanning tree of a connected graph is its connected acyclic subgraph that contains all vertices of the graph
+
+	A minimum spanning three (MST) of a weighted connected graph is its spanning tree of minimum wieht.
+
+	The MST problem is to find the MST for a given weighted connected graph.
+
+Floyd-Warshall algorithm && dikestras algorithm
+
+Disjoint sets (also called union find)
+	- maintain a collection s = {S1, S2, ..., Sn} of disjoint sets that change over time.
+	- each set is identified by a representative which is a member of the set.
+	Operations supported:
+		MAKE-SET(x): makes a new set S(n+1) = {x} and adds S(n+1) to s
+		UNION(x, y): if x in Sx, y in Sy then s = (s - Sx - Sy) u {Sx u Sy}
+		FIND(x): return  the representative of the set containing x
+	As an implementation, use a forest of trees
+		- one tree per set with the root as the representative
+		- each node points only to its parent (root points to itself)
+		- not a binary tree
+	Heuristics:
+		- union by rank, make root of the smaller tree (fewer nodes) a child of the root of the larger tree
+		- rank is an upper bound on the node height
+		- path compression (pointing as many nodes at the root as possible) done during find, points all nodes visited during find to root
+
+FINAL EXAM:
+	5 questions:
+		Q1 Dynamic Programming (25)
+		Q2 Greedy Algorithms (25)
+		Q3 Divide and conquer (20)
+		Q4 Graphs and DFS (20)
+		Q5 Problem (10)
+			- choice of data structures

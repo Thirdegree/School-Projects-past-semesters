@@ -1,0 +1,265 @@
+#TO PUT ON PAPER FOR EXAMS:
+	list of things you can do on calculator
+	equations
+	definitions for symbols (s, σ, μ, p(x), etc.) -------
+	distrabution specific formulas (short version when possible)
+
+#Terms
+	Probability 
+	Statistics
+	Population
+	sample
+	σ^2 = variance
+		>= 0 ALWAYS
+	s^2 = E(X^2)
+	μ = population mean
+	x_bar = sample mean = (1/N)*sum for i = 1 to N (x_i) 
+	z = a standard normal 
+		mean = 0 
+		variance = 1   
+	continuous random variables/data
+	discrete random variables/data
+	FOR DISCRETE VARIABLES
+		P: The probability that
+		P(A): The probability that event A occurs
+		P(X=3): The probability that random variable X has the specific value of 3
+		p(3): same
+		P(X=x): The probability that random variable X has the specific value x.
+		p(x) same
+		p(x) = P(X=x) = Probability Mass Function = PMF
+									 ^ random variable is discrete
+						Probability density Function = PDF
+									 ^ random variable is continuous
+		textbook uses f(x) instead of p(x) 
+		crazy teacher lady uses p(x) for discrete, scripted f(x) for continuous
+	FOR CONTINUOUS VARIABLES
+		F(x) = P(X<=x)
+			0<=F(x)<=1 for all x
+		E(X) = μ = integral for all x (xf(x))dx
+		V(X) = σ^2 = E(X^2) - μ^2 = (integral for all x (x^2f(x))) -  (xf(x))
+	define: in english, words describing what x represents
+	CDF:
+	Expected Value: E(X) = μ = population mean = the summation for all x (xp(x))
+	scripted "f(x)" is continuous, print "p(x)" is discrete
+
+#Examples
+	-----------------
+	x: face value for throw of a fair die (x={1..6})
+	p(x)        = 1/6 
+	E(X)        = μ 
+				= population mean 
+				= 3.5
+				= 21/6
+	E(X^2)      = sum for all x (x^2p(x)) 
+				= 1^2*(1/6) + 2^2*(1/6) + [...] + 6^2*(1/6)
+				= 91/6 
+				= 15.167 #she likes 3 decimal points
+	V(X)        = σ^2 
+				= population variance = E(X^2) - μ^2 
+				= 105/36 
+				= 2.917
+	σ           = sqrt(2.917) 
+				= 1.708 
+				= population standard deviation 
+		-----------------
+
+#CALCULATOR FUNCTIONS
+	normalcdf(Low, high, μ, σ)  - computes the area under the normal pdf between two values on the x axis
+								- computes PROBABILITY
+	invNorm(given, μ, σ)        - computes a specific value of x such that the area below is something given (her words)
+	
+#DISCRETE DISTRABUTIONS   
+	#FOR UNIFORM DISCRETE Probability
+		E(X)    = (a+b)/2 where a is the lowest x and b is the highest
+		V(X)    = ((b-a+1)^2 - 1)/12
+		E(X^2)  = sum for all x (x^2p(x))
+
+	#BERNOULLI DISTRABUTION (BINARY SITUATION)
+		p(x)    = (p^x)(1-p)^(n-x) for x = 0,1
+		E(X)    = μ 
+				= sum for x 
+				= 0 to 1 (x(p^x)(1-p)^(n-x)) 
+				= p
+		E(X^2)  = sum for all x (x^2p(x))
+		V(X)    = E(X^2)-μ^2 
+				= p(1-p)
+
+	#Binomial distrabution (A lot of binary Situations)
+		P(X=x)  = p(x) = (nCx)(p^x)(1-p)^(n-x) for x = 0,1..n
+		E(X)    = μ = sum for all x (xp(x)) 
+				= np
+		E(X^2)  = sum for all x (x^2p(x))
+		V(X)    = E(X^2)-μ^2 
+				= np(1-p)
+
+	#POISSON distrabution
+		E(X)    = μ 
+				= λ
+		V(X)    = σ^2 
+				= λ
+
+#CONTINUOUS DISTRABUTIONS
+	#THE UNIFORM DISTRABUTION (NOT THE SAME AS THE DISCRETE ONE)
+		E(X)    = (a+b)/2
+		E(X^2)  = integral for all x (x^2f(x))
+		V(X)    = (b-a)^2/
+
+	#EXPONENTIAL DISTRABUTION
+		f(x) = λe^(-λx) for x>=0
+		integral from x=0 to infinity f(x)dx = 1
+		P(X<=x) = F(x)  
+				= integral from 0 to x (λe^-(λx))ed 
+				= (-e^(-λx))^x
+				= 1-e^(-λx) for x>0
+		E(X)    = μ
+				= integral for all x (xf(x))dx
+				= integral for all x (xλe^(-λx))dx
+				= 1/λ
+		E(X^2)  = integral for all x (x^2(f(x)))dx
+		V(X)    = σ^2
+				= E(X^2) - μ^2
+				= (integral for x=0 to infinity ((x^2)λe^(-λx)dx )- (1/λ)^2
+				= 1/(λ^2)
+
+	#THE NORMAL (GAUSSIAN) PROBABILITY DENSITY FUNCTION (PDF)
+		f(x)    = (1/(σsqrt(2π)))(e^((-(x-μ)^2)/(2σ^2))) (SERIOUSLY???)
+		E(X)    = μ
+				= integral for all x (xf(x))dx
+		E(X^2)  = integral for all x (x^2f(x))dx
+		V(X)    = E(X^2) - μ^2
+		F(X)    = integral from low x to general x (f(x))dx
+
+	#STANDARD NORMAL PROBABILITY DENSITY FUNCTION (PDF) (the z is for "fuck you") ()
+		f(z)    = (1/sqrt(2π))(e^(-z^2/2)) for all z
+		E(Z)    = μ
+				= integral for all z (zf(z))dz
+				= 0
+		E(Z^2)  = integral for all z (z^2f(z))dz
+		V(Z)    = σ^2
+				= E(Z^2) - μ^2
+				= 1
+		Φ(z)    = F(z) (Again, for "fuck you")
+				= F(Z>=z)
+				= integral from low z to general z (f(z))dz
+				= integral from -inf to z (f(z))dz
+
+#ERRORS IN HYPOTHEOSIS TESTING
+	z_0 = (x_bar - μ_0)/(σ-sqrt(n))
+
+CHAPTER 4, PROBLEM 064 
+	a) Find P(L<μ<u)=0.95
+		L = x_bar - s*(t_(a/2),(n-1))/sqrt(n)
+		u = x_bar + s*(t_(α/2),(n-1))/sqrt(n)
+		Put in calculator for 1-var Statistics
+			x_bar = 231.67
+			s=1.531
+			n=5
+			α=.05
+		P(229.77<μ<233.57) = .95
+		Stat->tests->8:TInterval...
+	b)  H_0: μ = 235
+		H_1: μ != 235
+		t_0 = -4.863
+
+#CASE III: HYPOTHEOSIS tests and confidence intervals on the population variance, σ^2
+	χ^2 = ((n-1)S^2)/σ^2
+	degrees of freedom = n-1 = ν
+	above means find α
+	below means find 1-α
+
+	CH4P4 Go Tutorial
+	a)TEST THE HYPOTHEOSIS
+		H_0: σ=.35
+		H_1: σ!=.35
+		same as 
+		H_0: σ^2=.35^2
+		H_1: σ^2!=.35^2
+		use α = 0.05
+		(χ_0)^2 = (n-1)s^2/(σ_0)^2
+		(σ_0)^2=0.35^2
+		n = 51
+		s=0.37
+		ν= 51-1 = 50
+		(χ_0)^2 = 50*.37^2/0.35^2
+				= 55.878
+	b) FIND THE P-VALUE FOR THIS TEST.
+		fail to reject if 	χ^2_α/2,ν < χ_0^2 < χ^2_(1-α/2),ν
+							71.42     < 55.878< 32.36
+							no reject
+		p-value = .527 
+				= 2*(χ^2cdf(55.878, 10^99, 50))
+				with calculator
+				= .20 < p-value < 1.00
+				without calculator
+	c) CONSTRUCT A 95% 2-sided CONFIDENCE INTERVAL ON σ TO 4 DECIMAL PLACES
+		P(______<σ<_______) = 0.95
+		1) Find L & U such that P(L<σ^2<U)=0.95
+			L=0.09584
+			U=0.21152
+		2) Do P(sqrt(L)<σ<sqrt(U))=0.95
+			P(0.3096<σ<0.4599)=0.95
+
+#CASE IV Hypothesis tests and confidence intervals on the proportion, p, of a population
+	RECALL p(x) = (nCx)(p)^x(1-p)^(n-x)
+	EX:	
+		let H_0: p = 0.08
+		let H_1: P < 0.08
+		Question: Will you vote for Trump for the Republican nominee.
+		x = the number of people out of 22 who answered yes.
+		n=22
+		p_hat = x/n = 2/22 = 1/11
+		z_0 = (x-n(p_0))/sqrt(n(p_0)(1-p_0)) = (2-22*0.8)/sqrt(22*.08*.92) = .189
+		IN CALCULATOR
+			TESTS -> 1-PropZTest
+				p_0 = 0.08
+				x = 2
+				n = 22 
+				<p_0
+				p = p-value = 0.575 = F(z_0)
+				Fail to reject H_0
+		let α = .01
+
+Find a 95% Confidence Interval on μ_1-μ_2. P(L<μ_1-μ_2<U) = 0.95
+z_(α/2)  = 1.96
+L = -20.49
+U = 30.495
+
+IF L<0<U YOU HAVE FAILED TO REJECT H_0.
+
+IF Δ_0 = 5
+H_0: μ_1-μ_2 = 5
+H_1: μ_1-μ_2 > 5
+Same as 
+H_0: μ_1-(μ_2 + 5) = 0
+H_1: μ_1-(μ_2 + 5) > 0
+
+p-value = 0.500
+Fail to reject
+
+#THE F PROBABILITY DISTRABUTION FUNCTION
+	W and Y are independent random variables that are each distributed χ^2 with u and v degrees of freedom, respectively
+	The static F=(W/u)/(Y/v) ~=F_u,v with pdf f(x) = fuckitall, 0<x<inf
+
+	The critical values of f that correspond to α (one sided tests) or α/2 (two-sided test) have a special relationship (see keynote)
+
+#############################################	
+Chapter 5, problem 55
+	1) Can we conclude that the std devs are equal?
+		* Enter s1 into L1 && s2 into L2 on calc
+		* H_0: σ_1 = σ_2
+		  H_1: σ_1 != σ_2
+		* STAT -> TESTS -> E: 2SampFTest... -> Data -> L1,L2,1,1,!= -> Calculate
+			f = f_0 = test statistic
+			p = p-value
+		* if α < p-value, fail to reject, σ_1 can be assumed to be equal to σ_2
+	2) Fine L and U such that P(L< σ_1^2/σ_2^2 < U) = 0.95
+		* f_0(f_(1-α/2,u,v))
+		* u = n_1-1
+		* v = n_2-1
+	3) Can we conclude that the means are equal
+		* H_0: μ_1 = μ_2   SAME   μ_1 - μ_2 = 0 <-------- Δ_0
+		  H_1: μ_1 != μ_2  AS     μ_1 - μ_2 != 0<-------- Δ_0
+		* EITHER A CASE 2 or CASE 3 because σ_1^2 and σ_2^2 unknown
+		* CASE 2 if σ_1^2 and σ_2^2 assumed equal  <---------THIS ONE BECAUSE OF PART 1
+		* CASE 3 if σ_1^2 and σ_2^2 assumed unequal 
+		* STATS -> TESTS -> 4: 2-SampTTest... -> YES -> df=u+v, 

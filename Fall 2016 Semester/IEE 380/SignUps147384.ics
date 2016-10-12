@@ -1,0 +1,35 @@
+BEGIN:VCALENDAR
+PRODID:-//Apple Inc.//iCal 3.0//EN
+CALSCALE:GREGORIAN
+VERSION:2.0
+METHOD:PUBLISH
+BEGIN:VEVENT
+SEQUENCE:1
+DTSTART:20151109T130000
+DURATION:PT60M
+UID:wellnesssignups-147384
+TRANSP:OPAQUE
+SUMMARY:AppleCare College Program
+DESCRIPTION:Remote Interview with an Apple Manager - We would like to confirm the details of your upcoming interview with an Apple manager for the AppleCare College Program. 
+
+Please note that your interview time listed above is in Central Time.  Be sure to plan accordingly. 
+
+If your interview is via FaceTime, please be sure to turn on your WiFi setting.  We suggest to practice connecting with a friend prior to your interview. If your interview is via Skype, please check your security settings to ensure you can receive calls from outside of your contacts. 
+
+An Apple manager will start the interview by initiating a video chat with your listed FaceTime or Skype account. You should test your FaceTime or Skype account for video and sound input/output quality prior to your scheduled interview. Please sign in and be available at least 5 minutes prior to the interview to accept the video chat. If you indicated that you require a phone interview, the Apple manager will be calling the number you provided. Should the Apple manager be unable to connect with you via your Facetime or Skype, they will contact you at the number you provided.
+
+Don't forget to fill out the official Apple application. This is separate from you creating an online profile and applying to the AppleCare College Program, which you have already done. Please visit the Apple jobs site and sign in using your Apple ID. Next, complete your employment application by clicking My Application on the left side of the screen.
+
+We look forward to meeting you!
+
+
+Please do not reply to this message; it was automatically generated and replies will not be read.
+
+URL;VALUE=URI:http://hrsignup.apple.com/jobevents/mylist.php
+BEGIN:VALARM
+X-WR-ALARMUID:147384
+ACTION:AUDIO
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+END:VCALENDAR

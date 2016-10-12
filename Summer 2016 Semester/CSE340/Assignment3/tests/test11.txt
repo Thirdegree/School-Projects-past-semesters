@@ -1,0 +1,8 @@
+{
+    while (+ < r s true) {
+        r = * r s;
+    }
+    while (* > t u < v w) {
+        t = + t w;
+    }
+}

@@ -1,0 +1,1225 @@
+        .data
+msg1:   .asciiz "hello"
+var1:   .word   274
+array1: .word   2, 7, -3, 4, 7
+array2: .space  40 #40 bytes = 10 integers = 40 charecters
+array3: .byte   'a', 'b', 'c'
+        .text
+        .global main
+main: 
+        la $t0, var1 #t0 = address of 274
+        lw $t1, 0($t0)  #$t1 = 274
+
+--------------------------------------------
+#Core set
+add $t0, $t1, $t2 # t0 = $t1 + $t2     
+sub "", "", "" #t0 = $t1 - $t2
+lw $t0, offset[int]($t1) #$t0 gets the value of the address at $t1 + offset
+sw $t0, offset[int]($t1) #the value in $t0 is stored at address $t1+offset
+addi $t0, $t1, constant     #add immidiate 
+                            #$t1 can not be a constant
+move $t0, $t1   #$t0 = $t1  
+                #pseudo instruction (no hardware implementation, no mechine code translation)
+$zero == $0 #always contains 0
+
+#arithmatic
+mult $t0, $t1   #$t0 * $t1, stores in higher and lower register
+div $t0, $t1    #$t0/$t1 quotient stored in low, remainder stored in higher
+mflo $t2   #$t2 gets lower 32 bits of the result
+mfhi $t2   #$t2 gets upper 32 bits of the result
+
+#logical
+sll $t2, $s0, 4 #$t2 = $s0<<4
+srl $t2, $s0, 4 #$t2 = $s0>>4
+and $t2, $s0, $s1 #$t2 = $s0 AND $s1
+or
+andi $t2, $s0, 4 
+ori 
+nor $t2, $s0, $s1 #$t2 = $s0 OR $s1
+
+#control
+j Label #jump to label (ex j main)
+bne $s1, $s2, Label1
+slt $t0, $s0, $s1 #if ($s0 < $s1){$t0=1} else {$t0=0}
+slti $t0, $s0, 45 #if ($s0 < 45) {$t0=1} else {$t0=0}
+bgt $s0, $s1, Label #branch greater than
+blt                 #branch less than
+ble                 #branch less or equal
+sgt $t0, $s1, $s2   #set on greater than
+sge                 #set on greater or equal
+slt                 #set on less than
+jal FunctionName    #jump and link
+    #before jal
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    #after jal
+    lw $ra, 0($sp)
+    addi $sp, $sp, 4
+
+lwc1 $f2, 0($s0)   #load word coprocessor 1
+
+#LOOPS:
+    #C:
+        while(save[i]==k) {
+            i=i+1;
+        }
+    #MIPS
+        Loop:
+            sll $t0, $s1, 2 #i*4
+            add $t1, $t0, $s3 #s3 - base address; $t0 - offset
+            lw  $t2, 0($t1) #t1 is already offset = save[i]
+            bne $t1, $s3, Exit #$s3 is k
+            addi $s1, $s1, 1 #incriment i
+            j Loop
+        Exit: 
+            #things
+
+    #C:
+        if (a<b)
+            a = a + b;
+    #MIPS
+        slt $t0, $s0, $s1 #s0 = a, #s1 = b
+        beq $t0, $zero, Label
+        add $s0, $s0, $s1
+        Label:
+
+    #C:
+        if (a >= b)
+            a = a + b;
+    #MIPS
+        slt $t0, $s0, $s1
+        bne $t0, $zero, Label
+        qadd $s0, $s0, $s1
+        Label:
+
+
+#Assign the value in $t1 into $t0
+addi $t0, $t1, $zero
+
+#EXAMPLES
+    #C
+        int example(int g, int h, int i, int j){
+                    #  $a0    $a1    $a2    $a3
+            int f;
+            #  $s0
+            f = (g+h) - (i+j);
+                #$s1     $s2
+            return f;
+        }
+    #MIPS
+        example:    addi $sp, $sp, -12
+                    sw $s2, 0($sp)
+                    sw $s1, 4($sp)
+                    sw $s0, 8($sp)
+
+                    add $s1, $a0, $a1
+                    add $s2, $a2, $a3
+                    sub $s0, $s1, $s2
+                    move $v0, $s0       #$v0 to be returned
+
+                    lw $s0, 8($sp)
+                    lw $s1, 4($sp)
+                    sw $s2, 0($sp)
+                    addi $sp, $sp, 12
+
+                    jr $ra              #return
+
+    #C
+        int factorial(int n) {
+            if (n < 1)
+                return 1;
+            else {
+                int ans = n*factorial(n-1);
+                return ans;
+            }
+        }
+    #MIPS
+        factorial:  addi    $sp, $sp, -4
+                    sw      $ra, 0($sp)
+                    addi    $sp, $sp, -4
+                    sw      $a0, 0($sp)
+
+                    slt     $t0, $a0, 1 #if n< 1
+                    beq     $t0, $zero, Recur
+
+                    #Base case
+                    li      $v0, 1      #v0 to be returned
+                    lw      $a0, 0($sp)
+                    addi    $sp, $sp, 4
+                    lw      $ra, 0($sp)
+                    addi    $sp, $sp, 4
+                    jr      $ra         #end of base case
+
+        Recur:      #Recursive case
+                    addi    $a0, $a0, -1#n = n - 1
+                    jal factorial       #$vo = factorial(n-1)
+                    lw      $a0, 0($sp) #$a0 = n
+                    addi    $sp, $sp, 4
+                    lw      $ra, 0($sp)
+                    addi    $sp, $sp, 4
+                    mult    $a0, $v0    #n*factorial(n-1)
+                    mflo    $v0         #$v0 = factorial(n)
+                    jr      $ra
+
+-------------------------------------------
+#Number systems
+    #Decimal Numbers
+        278 = 2*10^2 + 7*10^1 + 8*10^0
+    #Binary Numbers
+        1101 = 1*2^3 + 1*2^2 + 0*2^1 + 1*2^0
+    #Hex
+        7B = 7*16^1 + B*16^0
+#Convert dec to Binary
+    #don't actually need notes on this
+-------------------------------------------
+#Assembly -> Machine code
+add $t0, $s1, $s2   #R format instruction (green sheet)
+                    #does not require an immediate (constant) nor offset
+                    #add, sub, nor, or
+$s1 = rs = source register
+$s1 = dt = target register
+$t0 = rd = destination register
+
+opcode |   rs  |   rt  |  rd   | shamt | funct
+   0   |   17  |   18  |   8   |   0   |  20(hex) #register numbers (green sheet)
+000000 | 10001 | 10010 | 01000 | 00000 | 100000
+
+lw $t0, 32($s2)
+$s2 = rs
+$t0 = rt
+32 = offset
+opcode |   rs  |   rt  |   immediate constant/offset
+23(hex)|   18  |   8   |     32
+100011   10010   01000   0000000000100000
+
+sw $t0, 32($s2)
+$s2 = rs
+$t0 = rt
+32 = offset
+opcode |   rs  |   rt  |   immediate constant/offset
+2B(hex)|   18  |   8   |     32
+101011   10010   01000   0000000000100000
+
+addi $t0, $s2, 61
+$s2 = rs
+$t0 = rt
+61 = offset
+opcode |   rs  |   rt  |   immediate constant/offset
+8(hex)|    18  |   8   |     61
+001000   10010   01000   0000000000111101
+
+bne $t0, $t1, Label1
+opcode |   rs  |   rt  |   immediate constant/offset
+  5        8       9     (BranchAddress-(programCounter+4))/4
+
+-------------------------------------------
+shamt = shift amount
+funct = function code
+--------------------------------------------
+sll $t0, $s0, 1 #what is in $t0
+$s0 = 5 = 101(bin)
+$t0 = 1010(bin) = 10
+
+sll $t0, $s0, 2 #what is in $t0
+$s0 = 5 = 101(bin)
+$t0 = 10100(bin) = 20
+
+sll $t0, $s0, i #t0 = $s0*2^i
+
+--------------------------------------------
+#stack
+First in last out
+$sp #points to the top of the stack
+--------------------------------------------
+#Spilling Registers (put less commonly used values into the main memory so we can manage more values with fewer registers)
+#use stack main memory
+--------------------------------------------
+HARDWARE
+    #HOW to express negative numbers
+        #sigu magnitude -> Set left bit to 1
+            100 = -0
+            101 = -1
+            110 = -2
+            111 = -3
+        #One's complement -> invert all bits
+            111 = -0
+            110 = -1
+            101 = -2
+            100 = -3
+        #two's complement -> invert all bits and add 1
+            111 = -1
+            110 = -2
+            101 = -3
+            000 =  0
+        #We use two's complement to represent negative numbers.
+            1010 = 10 or -6
+
+    #Overflow
+        #occurs when the result of an operation is too large to be represented in a finite word (4 bytes)
+        #positive + negative cannot result in an overflow
+        #if the signs are the same (pos+pos or neg+neg)
+            7+6 (assuming 4 BIT word)
+            0111 + 0110 = 1101
+            #using two's compliment, so 1101 is a NEGATIVE number
+    #how to detect overflow
+        #if adding two pos numbers and get a neg or adding two neg numbers and getting a pos, overflow happened
+    #if an exception such as overflow occurs, 
+        -> control jumps to a pre-defined address for exception
+        -> Interrupted address is stored for possible resuming
+    #Multiplication of integers
+        #assume 4 bit numbers
+            0110 * 0011 = 1110
+            #using two's compliment, so 1101 is a NEGATIVE number
+        #Negative Integers -> convert to pos and multiply
+        #multiplicatoin control Flow
+            Product Register = 0
+            Start -> Test multiplier's first bit to see if positive or negative -> if (1) add mulcand to product and place it in product register -> shift multiplicand to the left by 1 -> shift multiplier to the right by 1 -> repeate for the number of bits in the number (4 in example)
+
+            Iteration    Multiplicand     Multiplier   Product
+               0             0110            0011         0
+               1            01100             001        0110
+               2           011000              00        10010
+               3          0110000               0        10010
+               4         01100000               _        10010
+
+    #Division of integers
+        #Dividend = quotient * divisor + remainder
+        7/-2    quotient = -3
+                remainder = 1
+        #Division control Flow
+            init remainder with dividend
+            Start -> subtract Divisor from remainder, place result in remainder register -> test remainder -> if negative, restore original remainder by adding divisor and shift quotient to left by setting right bit to 0; else shift quotient to left by setting right bit to 1 -> shift the divisor to right by 1 bit -> repeat for the number of bits in the number
+                        0111 / 0010
+            Iteration    quotient     divisor   remainder
+                0          0000      00100000    00000111
+                1          0000      00010000    00000111
+                2          0000      00001000    00000111
+                3          0000      00000100    00000111
+                4          0001      00000010    00000011
+                5          0011      00000001    00000001
+
+    #fractions (bin to dec)
+        0.011(two)  = 0*2^-1 + 1*2^-2 + 1*2^-3
+                    =   0    +  0.25  +  0.125
+                    =   0.375(ten)
+        0.375(ten)  :  .375*2 -> 0.75 keep the 0 -> 0.75*2 -> 1.5 keep the 1 -> 0.5*2 -> 1 keep the 1 -> 0
+                    =   0.011
+    #Floating point numbers
+        -0.01101(two) = (-1)*1.101*2^(-2) < exponent
+                         ^     ^      
+                       sign  significand
+        IEEE 754 floating point standard
+        #single precision
+            sign      exponent      fraction
+            1 bit      8 bits        23 bits
+        #double precision
+            sign      exponent      fraction
+            1 bit      11 bit        52 bits
+
+        #EX:
+            -1.010111*2^14
+            #single precisions (exponent = 8 bits)
+                2^8 = 256
+                -127 ~ 128
+                    +127 Bias
+            For single precision, bias is 127
+            For double precision, bias is 1023
+
+            -0.75
+            #IEEE 754 format
+            -0.75 = -0.11
+            #normalized format
+            -1.1*2^-1
+            exponent = -1
+            biased exponent = -1 + 127 = 126
+            sign      exponent      fraction
+             1        01111110      10000000000000000000000
+            #double precision
+            exponent = -1
+            biased exponent = -1 + 1023 = 1022
+            sign      exponent      fraction
+             1       01111111110    1000000000000000000000000000000000000000000000000000
+
+            0
+            1*2^-127 = 0 to the hardware
+            #single precision
+            exponent = -127
+            fraction = 0
+
+    #floating point addition (4 bit precision)
+
+        #EX
+        0.5 + -0.4395
+
+        0.5 = 0.1(two) = 1.000 * 2^(-1)
+        -0.4395 = -1.110^2^-2(two)
+        Step1:
+            the significand of the number with a lesser exponent is shifted to the right to match its exponent to the one with a larger exponent
+            num1 = 1.000 * 2^-1
+            num2 = -0.111*2^-1
+        Step2:
+            add the significands 
+
+               1.000*2^-1
+            +(-0.111*2^-1)
+            --------------
+               0.001*2^-1
+        Step3:
+            normalize the sum, check for overflow or underflow
+            0.001*2^-1 =
+            1.000*2^-4
+            make sure the exponent is -126<=x<=127
+            no overflow or underflow
+        Step4:
+            Truncate the sum to 4 bits
+            1.000*2^-4 (already 4 bits)
+          ~=0.0625(ten)
+
+    #floating point Multiplication
+
+        #EX
+        0.5 * -0.4395
+
+        0.5 = 0.1(two) = 1.000*2^-1
+        -0.4395 = -1.11*2^-2
+        Step1:
+            Add the exponents without bias
+            -1 + -2 = -3
+        Step2:
+            multiply the significands
+            1.000
+          *-1.110
+          --------
+         1.110000 * 2^-3
+        Step3:
+            normalize the product and check for overflow or underflow
+            already normalize in this case
+            1.110000 * 2^-3
+            -126<=-3<=127 no under or overflow
+        Step4:
+            Truncate to 4 bits.
+            1.110*2^-3
+        Step5:
+            Signs are different so result is negative
+            -1.110*2^-3
+          ~=-0.21875(ten)
+
+        #in MIPS
+
+                    .data
+        num1:       .word 76
+        num2:       .float 476.19
+        num3:       .double 1.24e+5
+
+                    .text
+                    .globl main
+        main:
+                    la $s0, num2
+                    lwc1 $f2, 0($s0)
+                    la $s1, num3
+                    lwc1 $f4, 0($s1)
+                    lwc1 $f5, 4($s1)
+                    add.s $f8, $f2, $f2
+                    add.d $f6, $f4, $f4 #actually looks at two registers and stores in two registers 
+
+    #Rounding errors
+        #EX
+            x + (y+z) = (x+y) + z #not in computers
+            x= -1.5*10^38
+            y = 1.5*10^38
+            z = 1(ten)
+            x+y = 0
+            (x+y)+z = 1.0 (ten)
+            y+z = 1.5*10^38 + 1 =1.5*10^38 + 0.000000000000000000000000000000000000015*10^38 = 1.5*10^38 + 0 = 1.5*10^38
+            x+ (y+z) = -1.5*10^38 + 1.5*10^38 = 0(ten) 
+
+    #guard digits (extra bits to be kept during intermediate calculations)
+        #EX: (ASSUME 3 sig digits) 
+            add 2.56(ten) *10^0
+                2.34(ten) *10^2
+            with guard of 2 digits
+            Step1:
+                2.56(ten) * 10^0 = 0.0256*10^2 #(two guard digits let us keep the 56)
+                0.0256*10^2 + 2.34*10^2 = 2.3656*10^2
+                 
+            Step2:  round to 3 digits
+                2.37*10^2
+            without guard
+            Step1:
+                2.56(ten) * 10^0 = 0.02*10^2
+            Step2:
+                2.36*10^2
+
+#COMPUTER PERFORMANCE
+    #Response time: the time between the start and completion of a task
+
+    #Throughput: the total amount of work done in a given time
+
+    For some program running on machine x
+    Performance_x = 1/ExecutionTime_x
+
+#SEC 1.6
+    #CLOCK cycle time (time between ticks)
+        = seconds per cycle
+    #clock rate (frequency)
+        = 1/clock cycle time
+        = cycles per second
+        1Hz = 1 cycle per second
+        4GHz = 4*10^9 1Hz
+        clock cycle time    = 1/clockrate 
+                            = 1/(4*10^9)
+                            = 0.25 * 10^-9 seconds
+                            = 250 picoseconds
+        picoseconds         = 10^-12 seconds
+    #CPU Execution Time for a given program
+        = clock cycle * clock cycle time
+        = clock cycle / clockrate
+        #EX 
+            # A program runs in 10 seconds on computer A
+            # A_clock_rate = 4GHz
+            # we want to build another machine computer B that will run the same program in 6 seconds and have 1.2 times as many clock cycle as computer A
+            # find the clock rate for B
+                10seconds   = clock cycle/(4*10^9)
+                clock cycle = 4*10^10 cycles
+                6seconds    = 1.2*4*10^10/clockrate
+                6seconds    = 4.8*10^10/clockrate
+                clockrate   = 8*10^9 cycles/second
+                            = 8GHz
+    #CPI - clock cycles per Assembly instruction (average)
+        #EX
+            #Try to decide which code sequence to use
+                #3 kinds of instructions: 
+                    #A (add, sub)
+                        CPI: 1
+                    #B (lw)
+                        CPI: 2
+                    #C (addi)
+                        CPI: 3
+                #Code sequence 1
+                    A: 2
+                    B: 1
+                    C: 2
+                    total: 5
+                #Code sequence 2
+                    A: 4
+                    B: 1
+                    C: 1
+                    total: 6
+                #compute total clock cycles = sum (cpi_i * count_I) (just add them up lol)
+                #sequence 1
+                    cycles: 10 cycles
+                    CPI: cycles/count = 10/5 = 2
+                #sequence 2
+                    cycles: 9 cycles
+                    CPI: cycles/count = 9/6 = 1.5
+        #EX
+            #Machine A 
+                clock cycle time = 250 ps
+                CPI = 2.0
+            #Machine B
+                clock cycle time = 500 ps
+                CPI = 1.2
+            #Which is faster?
+                I = number of instruction in a program
+                clock cycles = number of instructions * CPI 
+                clock cycles for A = I * 2.0
+                clock cycles for B = I * 1.2
+                CPU time = clock cycles * clock cycle time
+                CPU time for A  = I*2.0*250 ps
+                                = 500*I ps
+                CPU time for B  = I*1.2*500 ps
+                                = 600*I ps 
+                A is faster
+                Performance_A / Performance_B   = CPU time B / CPU time A 
+                                                = (600*I)/(500*I) 
+                                                = 1.2
+                A is 1.2 times as fast as B
+    #REVIEW FROM CSE 120: Appendix C
+        #Decoders
+        #Multiplexers
+        #ALU
+            add $t0, $t1, $t2
+            and
+            or 
+            nor
+            sub
+    slt $t0, $t1, $t2
+            |\ 
+        rs -| \
+            |  \
+             \  |
+              \ |
+              / | - 1 or 0
+             /  |
+            |  /
+        rt -| /
+            |/
+            rs-rt 
+            if rs < rt, rs-rt <0
+            if rs >=rt, rs-rt>=0
+            take the leftmost bit
+            rs-rt<0 = 1 
+            rs-rt<=0= 0
+            srl 
+    PC beq $t1, $t2, Label
+    PC+4
+        Label = const*4+PC+4 = Branch Address
+            |\ 
+        rs -| \
+            |  \
+             \  |
+              \ | - 32 bits
+              / | - 1 if same, 0 if different
+             /  |
+            |  /
+        rt -| /
+            |/
+        Branch Address  - MUX
+        PC + 4          - MUX - new PC
+
+#Register file(a set of registers)
+    add $s0, $s1, $s2
+in 5bit | Read        | 32 bit out
+        | Register1   |
+        |             |
+in 5bit | Read        | 32 bit out
+        | Register2   |
+        |             |
+in 5bit | write       | 
+        | register3   |
+        |             |
+in 32bit| Write       |
+        | Value       | 
+        |             |
+        | Write       | 
+        | Control     |
+
+    implemented using -D flip-flop
+
+    add $t0, $t1, $t2
+    opcode |   rs  |   rt  |  rd   | shamt | funct
+    31   26|25   21|20   16|15   11|10    6|5     0
+
+    |Program|->|Read address                    |   
+    |Counter|  |              Instruction [31-0]|---------rs-->|Register|--->$t1-->|ALU|->$t1+$t1--v
+               |Instruction Memory              |   |-----rt-->|File    |--->$t2-->|ADD|           |
+                                                    |-----rd-->|        |                          |
+                                                             ->|Write   |                          | 
+                                                             |--------------------------------------
+
+    lw $t1, 32($t0)
+       rt      rs
+      write   read
+    opcode |   rs  |   rt  |   immediate constant/offset
+    31   26|25   21|20   16|15                         0
+
+    PC->| Read             |        |                |
+        | Address          |        |                |
+        |      Instruction |---rs-->|Read register1  |---$t0->|ALU|-$t0+offset-->|address  |---|
+        | Instruction      | |-rt-->|write register  |   ---->|add|              |     read|   |
+        | Memory           | |    --|write data      |   |                                     |
+                            -|----|                      |                                     |
+                            ||-offset--signExtention-----|                                     |
+                            |-------------------------------------------------------------------
+
+    beq $t0, $t1, const
+         rs   rt   
+        read read
+    opcode |   rs  |   rt  |   immediate constant/offset
+    31   26|25   21|20   16|15                         0
+
+    PC-|->| Read             |        |                |
+       |  | Address          |        |                |
+       |  |      Instruction |---rs-->|Read register1  |-$t0->|ALU|-zero------>
+       |  | Instruction      | |-rt-->|read register2  |-$t1->|SUB|-($t0-$t1)->
+       |                     |
+       |                     |--const--signExtension---|sll2|--|ALU|---------
+       |-|ALU|------PC+4---------------------------------------|ADD|
+    4--->|ADD|
+
+            Critical Functional Units
+all(imp)| IF | ID | ALU | M | WB | (for figuring out stalls/forwarding) 
+r-type  | Instruction Fetch | Register Read | ALU | Register Write
+lw      | Instruction Fetch | Register Read | ALU | Main Memory Read | Register Write
+sw      | Instruction Fetch | Register Read | ALU | Main Memory Write
+beq     | Instruction Fetch | Register Read | ALU / branch address computation
+j       | Instruction Fetch 
+    Clock Speed? 
+    Example - Assume negligible delays except: 
+                -memory access      = 200ps
+                -ALU or adders      = 100ps
+                -Register access    = 50ps
+        1) Assume an inplementation where every instruction operates in 1 clock cycle of a fixed length
+            R-type  = 200ps + 50ps + 100ps + 50ps = 400ps
+            lw      = 200ps + 50ps + 100ps + 200ps + 50ps = 600ps
+            sw      = 200ps + 50ps + 100ps + 200ps = 550ps
+            beq     = 200ps + 50ps + 100ps = 350ps
+            j       = 200ps
+            clock cyle time = 600ps
+        2) Assume an implementation where every instruction operates in 1 clock cycle of a variable length
+            which for each instruction is as long as it needs to be.
+
+            Assume the following instruction mix:
+                25% loads
+                10% stores
+                45% R-type
+                15% branches
+                5% jumps
+                600ps*0.25 + 550ps*.1+400ps*.45+350ps*.15+200ps*.05 = 447.5
+        3) Assume an implementation where each critical unit is operated in 1 clock cycle of a fixed length
+            clock cycle time   = 200ps
+            R-type  = 4 cycles = 800ps
+            lw      = 5 cycles = 1000ps
+            sw      = 4 cycles = 800ps
+            beq     = 3 cycles = 600ps
+            j       = 1 cycles = 200ps
+        4) Pipelining - Implementation techniquie in which multiple instructions are overlapped in execution like an assembly line
+            lw $t0, 4($s0) | Instruction Fetch | Instruction decode/register read | ALU /Execution | Memory access | Register Write
+            add $t1, $t2, $t3                  | Instruction Fetch | Instruction decode/register read | ALU/Execution | nop | Register Write 
+
+            All instructions must have 5 stages, even though nop is done sometimes
+            #PIPELINE HAZARDS
+                1) Structural Hazards
+                    hardware unit cannot support multiple instructions in one clock cycle
+                    lw $t0, 0($s0)
+                    lw $t1, 4($s0)
+                    lw $t2, 8($s0)
+                    lw $t3, 16($s0)
+                    | IF | ID | ALU| *Memory access* | **Register Write**
+                         | IF | ID | ALU| Memory access | Register Write
+                              | IF | ID | ALU| Memory access | Register Write
+                                   | *IF* | **ID** | ALU| Memory access | Register Write
+                    *BOTH MEMORY READS*
+                    Solution - we create an instruction memory write and a data memory unit
+                    **BOTH REG ACCESS**
+                    Solution - Split cycle in half, use first half to write and second half to read
+                2) Data Hazards
+Definition: Data Dependency - an instruction needs to read from register that is written by a previous instruciton.
+                    2-1)
+                        add $t0, $s0, $s1
+                        sub $t1, $t0, $s3
+                                                                                 $s0+$s1                $t0 written
+                        | Instruction Fetch | Instruction decode/register read | ALU/Execution | nop | Register Write 
+                                            | Instruction Fetch | Instruction decode/register read | ALU/Execution | nop | Register Write 
+                                                                        $t0 is read
+                        Solution - take data straight from add ALU and send it to sub ALU for next instruction (aka forwarding aka bypassing)
+                                    requires adding extra hardware to retrieve the missing data early from the internal resources
+                    2-2)
+                        lw $s0, 4($t1)
+                        add $t3, $s0, $s2
+                        | IF | ID | ALU| /*Memory access*/ | Register Write
+                             | IF | ID | **nop** | ALU | Memory access| Register Write 
+
+                        *VALUE TO BE WRITTEN TO $s0 BECOMES AVALIBLE*
+                        /FORWARDING HAPPENS HERE/
+                        **wait for value to become available**
+                        A stall is needed when a lw is followed by an R-type instruction
+                    2-3)
+                        lw $t1, 4($t0) #$t1 = B
+                        lw $t2, 12($t0) #$t2 = D
+                        add $t3, $t1, $t2 #requires stall
+                        sw $t3, 0($t0) #A=$t3
+                        lw $t4, 16($t0) #$t4 = E
+                        add $t5, $t1, $t4 #requires stall
+                        sw $t5, 8($t0) #C= B+E
+                        REORDER:
+                        lw $t1, 4($t0) #$t1 = B
+                        lw $t2, 12($t0) #$t2 = D
+                        lw $t4, 16($t0) #$t4 = E
+                        add $t3, $t1, $t2 #No more stall
+                        sw $t3, 0($t0) #A=$t3
+                        add $t5, $t1, $t4 #no more stall
+                        sw $t5, 8($t0) #C= B+E
+                3) Control Hazards (aka branch hazards)
+                    
+                    beq $t0, $t1, Label
+                    add ... #already in the pipeline
+                    sub ... #already in the pipeline
+                    Label:
+
+                    Solution - branch prediction + hardware to flush bad instructions from pipeline
+
+            #HARDWARE IMPLEMENTATION 
+                #FORWARDING
+                    add $t0, $t1, $t2
+                    sub $t3, $t0, $t4
+                    add $t5, $t6, $t0
+                    sub $t7, $t0, $t8
+                                  $t0       $t0 written first half
+                    | IF | ID | ALU| M  | WB |
+                                   V   *V*
+                         | IF | ID | ALU| M  | WB |
+                                       *V*
+                              | IF | ID | ALU| M  | WB |
+                                   | IF | ID | ALU| M | WB |
+
+                    V - 1 cycle
+                    *V* - 2 cycles
+
+                    CHECK ONLINE NOTES FOR IMPLEMENTATION
+
+                    Define: Forwarding Unit 
+                        add $t2, $t0, $t1 <--EX/MEM register
+                        add $t5, $t2, $t2 <--ID/EX register
+                            rd    rs   rt
+                        Decision on which forwarding values to use is made in ID/EX (online notes, in-class handouts)
+
+                        1)EX/MEM register rd == ID/EX register rs
+                        2)EX/MEM register rd == ID/EX register rt
+                            both require forwarding
+                        add $t2, $t0, $t1 <--WriteBack register
+                        add ------------- <--
+                        add $t5, $t2, $t2 <--ID/EX register
+                        3)MEM/WB register rd = ID/EX register rs
+                        4)MEM/WB register rd = ID/EX register rt
+                    #INSIDE FORWARDING UNIT
+                        1)EX Hazard (2 instructions are 1 cycle apart)
+                            if ((EX/MEM.RegWrite=1) and (EX/MEM.RegisterRD!=0) and (EX/MEM.RegisterRD==ID/EX.Registerrs))
+                                Forward A = 10
+                            if ((EX/MEM.RegWrite=1) and (EX/MEM.RegisterRD!=0) and (EX/MEM.RegisterRD==ID/EX.Registerrt))
+                                Forward B = 10  
+                        2)MEM Hazard (2 instructions are 2 cycles apart)
+                            if ((MEM/WB.RegWrite=1) and (MEM/WB.RegisterRD!=0) and not ((EX/MEM.RegWrite=1) and (EX/MEM.RegisterRD!=0) and (EX/MEM.RegisterRD==ID/EX.Registerrs)) and (MEM/WB.RegisterRD=ID/EX.Registerrs))
+                                Forward A = 01
+                            if ((MEM/WB.RegWrite=1) and (MEM/WB.RegisterRD!=0) and not ((EX/MEM.RegWrite=1) and (EX/MEM.RegisterRD!=0) and (EX/MEM.RegisterRD==ID/EX.Registerrt)) and (MEM/WB.RegisterRD=ID/EX.Registerrt))
+                                Forward B = 01
+                    #STALLS 
+                        lw $t2, 4($t0) #ID/EX reg
+                        add $t5, $t2, $t2 #IF/ID reg
+                        if (((ID/EX.Registerrt = IF/ID.Registerrs) or (ID/EX.Registerrt = IF/ID.Registerrt)) and ID/EX.MemRead=1)
+                            stall
+
+                        To stall the pipeline we need to stall:
+                            The instruction in the ID stage does not change
+                                prevent IF/ID pipeline register from changing
+                            The instruction in the IF stage does not change
+                                prevent Program counter from changing
+                            The back half of the pipeline starting in the EX stage must be doing something
+                                nop = an instruction that does not do anything to change it's state
+                                    = all control values are 0  in ID/EX pipeline register
+
+                    #HAZARD DETECTION UNIT
+                        input:  ID/EX Registerrt
+                                ID/EX.MemRead
+                                IF/ID.Registerrt
+                                IF/ID.Registerrs
+                        output: PC write Control = 0 (cannot write new value to program counter)
+                                IF/ID write Control = 0 (cannot write to IF/ID register)
+                                mux to send 0 for control 
+                                control to mux to send 0 to ID/EX control values
+
+                    #CONTROL/BRANCH HAZARD
+                        beq $t1, $t2, Label
+                        add ....
+                        sub ....
+                        add ....
+
+                        Label:
+
+                        |IF|-->|ID|-->|ALU|->|M |-->|WB|
+                                        ^branch decision
+                        if you branch you have to flush 2 instructions, losing 2 cycles
+
+                        Two ways to improve branch performance
+                            1) To predict the branch decision with a high probability
+                            2) To reduce the cost of taking branches, move the branch decision to the earlier cycle.
+                                |PC|-->|IF|-->|RegFile|-->|ALU|
+                                                2nd cycle  3rd cycle
+                                cheat and put a comparison unit in 2nd cycle.
+                                    first, xor each bit in each number
+                                    then or all the results
+                                Move the branch address calculation to the ID stage instead of the EX stage
+                                add IF.Flush control  to zero
+
+#DYNAMIC BRANCH prediction
+    #Record the history of branch on the run, and predict branch based on it.
+        #A branch prediction buffer
+            while (...) { <- usually doesn't branch
+
+            } <- finally branches
+        #Using 2 bit prediction buffer
+            if branch isn't taken twice, change prediction to not taken. if branch is taken twice, change prediction to taken
+
+#EXCEPTION/INTERRUPT
+    Events other than branches or jumps that change the normal flow of control.
+
+    FROM WHERE:
+        IO DEVICE REQUEST:
+
+        EXTERNAL:
+
+        INTERRUPT:
+
+        ARITHMETIC OVERFLOW:
+            |IF| ->|ID| ->|ALU|->|MEM|->|WB|
+                            ^ find out where there is an overflow
+             ^      ^       ^ flush these instructions
+            To flush:   IF.Flush signal to zero controls in IF (from Branch Hazard)
+                        ID.Flush signal to zero controls in ID OR'd with stall signal from the Hazard dection unit
+                        EX.Flush signal to zero controls in EX
+            To fetch the instructions for arithmatic overflow exception:
+                get the address 0x80000180 -> PC
+                ECP (exception program counter) - a 32 bit register used to hold the address of the affected instruction.
+                Cause - a register used to record the cause of the exception
+
+        INTERNAL:
+
+        EXCEPTION:
+
+#CHAPTER 5 MEMORY HiERACHY
+    SRAM- value is stored on a pair of inverting gates
+        - fast, takes more space
+    DRAM- value is stored as a charge on capacitor
+        - must be refreshed (volitile memory)
+        -small, but slow
+                    Access time         cost
+    SRAM            "0.5-2.5ns"         "$300-1000/GB"
+    DRAM            "50-70ns"           "$10-20/GB"
+    Magnetic disk   "5-20million ns"    "$0.05-0.10/GB"
+
+    Processor   cache   Main Memory     Hard Disk
+    |register|<load-----|          |<--|        |
+    |        |----store>|          |
+
+    Cache - the level of the memory hierarchy between the processor and the main memory (SRAM)
+        The principle of the locality:
+            Locality in time:
+                if an item is referenced it will tend to be referenced again
+            Locality in space:
+                items whose addresses are close by will tend to be referenced soon
+        Direct Mapped Cache:
+            each memory address in the lower level (main memory) is mapped directly to exactly one location in the upper level (cache)
+
+            EX:
+                Cache contains 8 blocks
+                |CACHE|     |Main Memory|
+               0|     |   99|           |
+               1| 17  |     |           |
+               2|     |     |           |
+               3|     |   17|           | 17 mod 8 = 1
+               4|     |     |           |
+               5| 13  |   13|           | 13 mod 8 = 5
+               6|     |    1|           |
+               7|     |    0|           |
+               (Block address) mod (number of blocks in cache)
+               For collisions, replace the old with the new.
+
+               To find n mod 2^m, take the last m bits of n. EX 17 = 10001 -> 001 = 1
+        Tag: the bits in the address not used for the cache block index
+             used to determine/distinguish which address where each data in the cache are from
+
+        Valid bit: whether an entry in a cache contains a valid data (or empty)
+            EX: Insert data at address 22
+                                       26
+                                       18
+
+                Cache:
+                   index | valid | Tag | Data
+                0| 000   |   0   |     |  
+                1| 001   |   0   |     | 
+                2| 010   |   1   |  11 | Mem(26)
+                3| 011   |   0   |     | 
+                4| 100   |   0   |     | 
+                5| 101   |   0   |     | 
+                6| 110   |   1   |  10 | Mem(22) 
+                7| 111   |   0   |     | 
+
+            Hit: data requested is in the upper level (cache)
+
+            Miss: data requested is not in the upper level
+
+        #Single Word cache Block
+
+        address in bytes
+
+        |31      tag     |      index     |1|0
+                                           ^byte offset
+
+        Valid AND (Tag_cache = tag_address) = hit
+
+        #Multi word cache Block
+
+        Each cache block contains more than one word (=4bytes=32 bits) data.
+        Use Space Locality 
+            EX:
+                consider a cache with 64 blocks and a block size of 16 bytes (4 words). what block number does the bytes address 1200 map to?
+
+                1) Block Address = floor(byte address/bytes per cache block)
+                    OR
+                   Block Address = floor(word address/words per cache block)
+                2) Cache block number/index = Block address mod (number of blocks in cache)
+
+                1. Block Address = 1200bytes/floor(16bytes) = 75
+                2. block number = 75 mod 64 = 11
+
+        |31  tag  |  index  | Block offset bits   |1|0
+                                                   ^byte offset
+
+        Valid AND (Tag_cache = tag_address) = hit
+        Block offset -> Mux(data) = data        
+
+    How many bits are used for a chace table?
+    32 bit address
+    |tag|indexbits|blockoffsetbits|byteoffsetbit|                                
+    n=number of index bits
+    m=number of block offset bits
+    number of tag bits per address = 32-n-m-2   (direct-mapped cache)
+      Valid    tag    data
+    |       |       |       |
+    |       |       |       |
+    |       |       |       |
+    |       |       |       |
+    |       |       |       |
+    indexes = 2^n
+    Total number of bits used for cache table = 2^n * (1+(32-n-m-2) + 2^m*32)
+
+    EX: How many total bits are needed for a direct-mapped cache with 16kb of data and 4 word blocks
+    16KB ~= 4096 words = 2^12
+    since each block/index can contain 4 words, devide by 4
+    number of indexes = 2^10
+    n   = number of index bits 
+        = log2(number of indexes) 
+        = 10
+    m   = number of block offset bits
+        = log2(number of words per block) 
+        = 2
+    tag bits per addres = 32-10-2-2 = 18
+    Total number of bits used for cache = 2^10*(1+18+2^2*32) = 150528 bits
+
+    Early Restart
+        to resume execution as soon as the requested word is returned rather than waiting for the entire block.
+    Requested Word/Critical Word First
+        To organize the memory so that the requested word is transferred from the meory to the cache first, then the remainder is transfered.
+    Design issues
+        Miss rate - the rate of cache access when the requested word is not found.
+        Hit rate - 1-Miss rate
+        Miss Penalty - time required to fetch data from the memory to cache
+    Average access time
+        Hit time (time to access cache) + (1-Miss Rate) + MissPenalty*MissRate
+
+        | |              |
+        | |              |
+Average | \             /
+Access  |  \           / 
+Time    |   \         /
+        |    \_______/
+        |_______________________
+              Block Size
+
+    Read Hits - just read from cache
+    Read misses - stall CPU, fetch block from memory to cache, restart 
+    Write misses - read the entire block from memory to cache, write to word
+    Write hits - 
+        Write-through - update both cache and main memory to ensure both are consistant
+            Write-bufffer - holds values that need to be written from cache to memory (memory write is slow)
+        Write-back - update values to the memory only when the cache blcok is replaced.
+
+    Performance for memory/cache
+        Execution time  = (execution cycles = stall cycles)*cycle time
+        Stall cycles    = (number of instructions * miss ratio) * miss penalty
+
+        EX:
+            An instruction cache miss rate is 2% (IF stage)
+            A data cache miss rate is 4% (mem stage)
+            A processor has CPI=2 without memory stalls.
+            The miss penalty is 100 cyces for all misses.
+            The frequency of all loads and stores is 36%.
+
+            Let I be the number of instructions in a program.
+            IF stage miss cycles    = I * .02 * 100 = 2I cycles
+            MEM stage miss cycles   = I * .36 * .04 * 100 = 1.44 * I cycles.
+            Total number of cycles  = 2I + 1.44I = 3.44 * I cycles
+            Total number of cycles  = Execution cycles + stall cycles
+                                    = 2 * I + 3.44 * I
+                                    = 5.44 * I = 5.44 CPI
+            The ratio of CPU execution time = (I*CPI_stall*clockcycle)/(I*CPI_no_stall*clockcycle)
+                                            = 5.44/2 = 2.72
+
+    AMAT (Average memory access time) = Time for a hit + missrate * misspenalty
+        EX: 
+            We have a processor with a 1 ns clock cycle time 
+            a miss penalty of 20 cycles 
+            a miss rate of 0.05 misses per instuction
+            a cache access time of 1 clock cycle
+
+            Average memory Access cycles    = cycles for a hit + miss rate * miss penalty in cycles
+                                            = 1 cycle + 0.05 * 20 = 2 cycles
+            AMAT                            = 2 cycles * 1 ns/cycle = 2 ns
+
+    Fully associateive cache
+        Any cache structure in which a block can be placed anywhere in the cache
+        To find a given block, all entries need to be searched.
+
+    Set Associative cache
+        A cache that has a fixed number of sets (at last 2)
+        Each block maps to a specific set, but can be placed any location in the set
+
+    n-way set associateive cache
+        a set associateve cache with n elements/blocks for each set.
+        the position of a block = (block address) mod (number of sets in cache)
+
+    A direct-mapped chache is 1 way set associative 
+
+    A fully associated cache with m entities is m way set associative
+
+    LRU (Least Recently Used)
+        replacement scheme in which the block replaced is the one that has not been used for the longest.
+
+    Example - Direct mapped cache w/ 4 blocks
+
+    Block address |        |    0     |     1     |    2    |    3    | 
+         0        | Miss   |  Mem(0)  |           |         |         |
+         8        | Miss   |  Mem(8)  |           |         |         |
+         0        | Miss   |  Mem(0)  |           |         |         |
+         6        | Miss   |  Mem(0)  |           | Mem(6)  |         |
+
+            - 2 way set associative 
+    Block address |        |    Set 0             |    Set 1          | 
+         0        | Miss   |  Mem(0)  |           |         |         |
+         8        | Miss   |  Mem(0)  |   Mem(8)  |         |         |
+         0        |  Hit   |  Mem(0)  |   Mem(8)  |         |         |
+         6        | Miss   |  Mem(0)  |   Mem(6)  |         |         |
+         8        | Miss   |  Mem(8)  |   Mem(6)  |         |         |
+
+            - Fully Associative
+    Block address |        |    Set 0                                 |
+         0        | Miss   |  Mem(0)  |           |         |         |
+         8        | Miss   |  Mem(0)  |   Mem(8)  |         |         |
+         0        |  Hit   |  Mem(0)  |   Mem(8)  |         |         |
+         6        | Miss   |  Mem(0)  |   Mem(8)  |  Mem(6) |         |
+         8        |  Hit   |  Mem(0)  |   Mem(8)  |         |         |
+
+    Implementation of 4 way set associative cache with 1 word per block
+    32 bit address
+    |                |                                   |1   0|
+       Tag bits          index bits                        Byte offset
+
+    Index      Valid  | Tag |  Data |  | Valid  | Tag |  Data |  | Valid  | Tag |  Data |  | Valid  | Tag |  Data
+    set0              |     |       |  |        |     |       |  |        |     |       |  |        |     | 
+    set1              |     |       |  |        |     |       |  |        |     |       |  |        |     | 
+    set2              |     |       |  |        |     |       |  |        |     |       |  |        |     | 
+    ...
+
+    number of bits used for tags 
+        EX: Assume a cache contains data of 4096 blocks where each block is of 4 words
+            Find the number of sets and number of tag bits for direct mapped, two way set associative, four way set associative, and fully associative.
+
+        Direct Mapped:
+            Sets = number of indexes = 4096
+            index bits = log2(number of indexes) = 12
+            block offset bits = log2(4) = 2
+            number of tag bits per address = 32 - 12 - 2 - 2 = 16
+            total number of tag bits in cache = 4096*16 = 64k tag bits
+
+        Two-way set associative:
+            Sets = number of indexes = 4096/2 = 2048
+            index bits = log2(number of indexes) = 11
+            block offset bits = log2(4) = 2
+            number of tag bits per address = 32 - 11 - 2 - 2 = 17
+            total number of tag bits in cache = 2*2048*17 = 68k tag bits
+
+        Four-way set associative:
+            *Do at home* Might be on test.
+
+    2 level cache
+        Base CPI=1.0
+        clock rate = 4GHz
+        main memory access time = 100ns
+        l2 cache access time = 5ns
+        l2 miss rate = 0.5%
+
+        Find the effective CPI of the single level cache:
+            number of cycles for one miss penalty to main memory    = main memory access time * clock rate
+                                                                    = 100*10^-9 * 4*10^9
+                                                                    = 400 clock cycles.
+            Total number of cycles for miss penalty = I*.02*400 
+                                                    = 8I
+            The total cycles    = CPI.base * I + memory stall cycles 
+                                = 1.0I + 8I 
+                                = 9I
+            Effective CPI   = 9I/I
+                            = 9 CPI
+
+        Effective CPI of the two level cache:
+            number of cycles for one miss penalty to L2 cache   = 5*10^-9 * 4*10^9
+                                                                = 20 clock cycles
+            Total number of cycles for miss penalty = I(0.02-0.005)*20 + I*0.005*(400+20)
+                                                    = 0.4I + 2I 
+                                                    = 2.4I 
+            Total cycles    = CPI.base * I + miss cycles
+                            = 1I + 2.4I
+                            = 3.4I
+            Effective CPI   = 3.4I/I
+                            = 3.4 CPI
+
+        Effective CPI with 2 level cache is faster by 9/3.4 = 2.6 ratio.
+
+    #HARD DISK
+        Virtual Memory 
+            -how you deal with programs on hard disk larger than main memory.
+            -main memory acts as a cache for hard disk
+            2 major motivations
+                1. Removes the programing burdens of a small memory 
+                2. Allow efficient and safe sharing among multiple programs
+            Different Terminologies, but same concepts.
+            Cache vs virtual memory 
+                block -> page
+                cache miss -> page fault
+            Translation from virtual address to main memory address by hardware and software
+
+            Relocation
+                Maps virtual addresses to physical addresses in virtual memory 
+                |31                               |11     0|
+                    virtual page number            page offset
+                                    |
+                                    v
+                                translation
+                    |29                           |11     0|      
+
+                Pages: Virtual memory block
+                Page fault: the data is not in the memory - retrieve from the hard disk
+                    *huge miss penalty
+                    *so pages should be fairly large
+                    *reducing page faults is important. (LRU is worth the price)
+                    *can handle faults in software instead of hardware
+                    *Write-through is too expensive
+                     Write-back <---
+                    *To track whether a page has been written since it was read into the memory
+                        The Dirty bit is added. 
+                            There is no need to copy data into the disk if dirty bit = 0
+                Page Tabel: the table containing the virtual to physical address translation
+                    resides in memory
+                Page Tabel Register: the hardware includes a register that points to the start of the page tabel
+
+                The page table togeather with the program counter + the registers specifies (the state of a program)
+                                                                                                ^ process
+                Page table register
+                    virtual address
+                    | virtual page number | page offset |
+                        ^row in page tabel
+                    Page table
+                    | valid | physical page number |
+                    |       |                      |
+                    |       |                      |
+                    |       |                      |
+                    |       |                      |
+                    |       |                      |
+                    |       |                      |
+                    if valid bit = Y, 
+                    physical address
+                    |physical page number | page offset|
+                    if valid bit = N, it is in the harddisk
+                Operating System: 
+                    responsible for management and coordination of activities and sharing of resources in the computer.
+                    when a page fade (miss) occurs, the OS must be given control.
+                    Use bit/reference bit: a field that is set whenever a page is accessed and used to implement LRU (last resource used) or another replacement scheme
+                    The OS periodically clears the reference bits and later records them so that it can determine which pages were touched during a particular time persiod.
+
+                TLB(Translation lookaside buffer):
+                    acts like a cache for a page table for the entries that map to physical main memory address only.
+
+                    |Virtual page number| -> |TLB| - |Valid|Dirty|Reference|Tag|physical page number|
+                                                -> |Main Memory|
+                                          -> |Page Table| - |Valid|Dirty|Reference|physical page number or Hard disk|
+                                                -> |Main Memory|
+                                                -> |Hard Disk|

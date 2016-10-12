@@ -1,0 +1,89 @@
+Choice      Action
+------      ------
+A       Add Zipcode
+D       Search for Zipcode
+E       Search for City and State
+L       List Zipcode
+O       Sort by Zipcode
+P       Sort by City and State
+Q       Quit
+R       Remove by Zipcode
+S       Remove by City and State
+T       Close PostOffice
+U       Write Text to File
+V       Read Text from File
+W       Serialize PostOffice to File
+X       Deserialize PostOffice from File
+?       Display Help
+
+What action would you like to perform?
+Please enter a city to add:
+Please enter its state to add:
+Please enter its zipcode to add:
+zipcode added
+What action would you like to perform?
+Please enter a city to add:
+Please enter its state to add:
+Please enter its zipcode to add:
+zipcode added
+What action would you like to perform?
+Please enter a city to add:
+Please enter its state to add:
+Please enter its zipcode to add:
+zipcode added
+What action would you like to perform?
+Please enter zipcode to search:
+zipcode found
+What action would you like to perform?
+Please enter zipcode to search:
+zipcode not found
+What action would you like to perform?
+Please enter zipcode to search:
+Please enter an integer for zipcode. Zipcode not found
+What action would you like to perform?
+
+Birmingham in Alabama with zipcode of 35282
+Apache Junction in Arizona with zipcode of 85117
+Anchorage in Alaska with zipcode of 99502
+
+What action would you like to perform?
+Please enter zipcode to remove:
+zipcode not found
+What action would you like to perform?
+
+Birmingham in Alabama with zipcode of 35282
+Apache Junction in Arizona with zipcode of 85117
+Anchorage in Alaska with zipcode of 99502
+
+What action would you like to perform?
+Please enter zipcode to remove:
+zipcode removed
+What action would you like to perform?
+Please enter zipcode to remove:
+zipcode not found
+What action would you like to perform?
+
+Birmingham in Alabama with zipcode of 35282
+Apache Junction in Arizona with zipcode of 85117
+
+What action would you like to perform?
+Please enter a file name to write:
+postal.dat was written
+What action would you like to perform?
+post office closed
+What action would you like to perform?
+
+no zipcode
+
+What action would you like to perform?
+Please enter a file name to read:
+office.dat was not found
+What action would you like to perform?
+Please enter a file name to read:
+postal.dat was read
+What action would you like to perform?
+
+Birmingham in Alabama with zipcode of 35282
+Apache Junction in Arizona with zipcode of 85117
+
+What action would you like to perform?
