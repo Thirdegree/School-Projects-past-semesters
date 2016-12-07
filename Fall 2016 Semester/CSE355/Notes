@@ -1,0 +1,996 @@
+information gets represented as a string over an alphabet
+
+alphabet Σ is finite
+
+alphabet with 0 chars can write 1 thing - empty string
+alphabet with 1 chars is unary - tally marks (ex)
+
+String - a string is a finite sequence of characters 
+language - a possibly infinite set of strings over an alphabet Σ
+
+Let Σ be an alphabet
+    L be a language over Σ
+
+Question: Given a string w, is w a member of L? [Decision of membership]
+
+1) How many programs are there that can decide some language?
+    = # of strings over some fixed alphabet
+    = # of positive integers
+    = countably infinite
+2) How many languages are there to be decided?
+    = 1-to-1 correspondence with reals
+    = uncountably infinites
+
+----
+Σ = {0,1}
+
+L = {w: w is a string over Σ that represents in binary an odd integer}
+
+Want: program/matching to decide membership in L.
+    Given a string w, is w in L
+
+Machine will read one char at a time, and once all chars are read, it will report yes or no.
+Allow machine to have a finite amount of memory, independent of the size of the input.
+
+----
+formal definition of deterministic finite automaton (DFA)   
+Q = finite set of states (Ex: {q0, q1})
+Σ = finite alphabet (Ex: {0, 1})
+δ = transition function - a total function Q x Σ -> Q
+q0 ε Q start state q0
+F in Q set of final states {q1}
+
+----
+input:
+    Σ* - the set of all (finite length) strings with symobls from Σ
+    w is in Σ* = there exists n so that w = w1w2w3...wn with each wi in Σ
+
+Let M = (Q, Σ, δ, q0, F)
+    w = w1...wn in Σ*
+what is the computation of M on w?
+
+Defn: A _Computation_ of M on w where w = w1...wn is a sequence of n+1 states r0r1...rn where 
+    1. r0 = q0
+    2. ri = δ(r(i-1), wi) for 1 <= i <= n
+        A computation is accepting if 
+    3. rn in F
+
+M accepts w iff M has an accepting computation on w
+
+Defn: A language L is regular iff there is a DFA M with L = L(M)
+
+L is a subset of {0, 1}*
+L = set of strings that either start with 0 and end with 0 or start with 1 and end with one
+
+Let L be a langugage.
+The _Compliment_ of L is the set of all strings in Σ* that are not in L, denoted L_bar
+If L is regular, must L_bar be regular? (yes)
+----
+L regular language 
+    => The complement of L, L_bar, is also a regualar language
+    To show this:
+        L is the language of a DFA
+            M = (Q, Σ, δ, q0, F)
+        To form a DFA for L_bar, form
+            M' = (Q, Σ, δ q0, Q-F)
+    Claim: L(M') = L_bar
+        M accepts w iff M' does not accept w.
+
+Operations on languages
+    * complementation - 
+        regular languages are closed under complement
+=>  * Union of languages   
+        just a union of sets
+    * intersection
+        L1 intersect L2
+        L1 intersect L2 = L1_bar union L2_bar
+=>  * concatenation      
+        if w = w1 ... wn and x = x1 ... xn then wx (or w.x) is w1...wnx1...xn
+        if L1 and L2 are languages then 
+            L1L2 = {wx: w in L1 and x in L2}
+=>  * Let L be a langugage consider 
+        l(0) = {ε}
+        L(K+1) = L.L(k) for k >= 0
+        L* = union k>=0 of L(k)
+
+=>  Regular Operations (not the same regular as in regular language)
+
+Q: If L1 and L2 are regular languages, is L1 union L2 a regular langugage? [That is, are regular languages closed under union?]
+
+    L1 reg => M1 = (Q1, Σ, δ1, q01, F1) has L(M1) = L1
+    L2 reg => M2 = (Q2, Σ, δ2, q02, F2) has L(M2) = L2
+
+Claim: L1 union L2 is regualar and we will produce a DFA M for L(M1) union L(M2)
+    M = (Q1 X Q2, Σ, δ((q, q') ,a)=(δ1(q,a),δ2(q',a)), (q01, q02), {(q, q') in Q1xQ2 such that q in F1 or q' in F2})
+
+For intersection:
+    M = (Q1 X Q2, Σ, δ((q, q') ,a)=(δ1(q,a),δ2(q',a)), (q01, q02), {(q, q') in Q1xQ2 such that q in F1 AND q' in F2})
+
+^ Product Contruction
+
+concatenation: (WILL BE RETURNED TO LATER)
+
+Nondeterministic Finite Automaton (NFA)
+    An NFA is a 5-Tuple
+        (Q, Σ, S, q0, F)
+        Q = finite set of states
+        q0 in Q - start state
+        F subset of Q - final states
+        Σ - finite alphabet
+        δ - Q x (Σuε) -> Powerset(Q)
+                 Σ_ε  
+
+L = {w in {0,1}*, the longest suffix of w that contains only 0's, has 1,3, or 5 zeros, and is not empty}
+
+Computation of an NFA
+    M = (Q, Σ, S, q0, F) on input string w = w1w2...wn in Σ*
+    A computation of M on w is a string y1y2...ym with yi in Σ or yi=ε for 1<=i<=m s.t. w1...wn = y1...ym
+        and a sequence of states r0,r1,r2,...,rm with 
+            1) r0 = q0
+            2) ri in δ(r(i-1), yi) such that 1<=i<=m
+        If in addition rm in F this is an accepting computation
+    Language of M, L(M) = set of strings having at least one accepting computation by M
+
+concatenation
+    ->[m1]->[m2]->
+      [  ]<-[  ]
+           ε
+    remove final states from m1, make them transitions to m2
+
+    no states in common 
+    L(M) = L(M1)L(M2)
+
+Star - Let M1 be an NFA. Want an NFA for [L(M1)]*
+
+        -> accept -ε-> [M1]-
+              ^            |
+              |____________|
+
+
+Ø - The empty language
+Ø* = {ε}
+
+Let M = (Q,Σ, δ, q0, F) be a NFA
+    We are to build an DFA
+        M' = (Q', Σ, δ', q0', F')
+    for which L(M) = L(M')
+
+    For NFAs with no ε transitions
+        Q' = Powerset(Q)
+        q0' = {q0}
+        F' = {S subset of Q | S intersect F != Ø}
+        δ'(S, a) S subset of Q, a in Σ 
+            = Union over all q in S δ(q, a)
+
+    For NFAs with ε transitions
+        Let S be a subset of Q
+        Define E(S) to be the set of states that can be reached from a state of S by following only ε transitions
+        Q' = Powerset(Q)
+        q0' = E({q0})
+        F' = {S subset of Q | S intersect F != Ø}
+        δ'(S, a) S subset of Q, a in Σ 
+            = E(Union over all q in S δ(q, a))
+
+A generalized NFA (GNFA) is a 5-tuple (Q, Σ, δ, q0, F) where Q, Σ, q0, F are as before and δ is a function that maps QxR => P(Q) where R is a regular expression over Σ. So that 
+    1) No transition enteres the start state
+    2) No transition leaves the unique final state
+
+Idea: pick a state that is neither start nor final, and try to remove it without changing the language. ("rip" the state out) 
+
+Pumping lemma for Regular languages
+Let L be a regular language. Then there is a constant p called the pumping length so that whenever w ε L AND |w| >= p, it is possible to write w = uvx so that 
+    1. |uv| <= p
+    2. |v| >= 1
+    3. u(v^i)x ε L for all i>=0
+
+Claim: L1 = {a^nb^n: n>=0} is not regular
+Proof: Suppose to the contrary that L1 is regular. By the pumping Lemma, L1 has a pumping length p.
+    Choose w so that w in L1 and |w| >= p -- w = a^pb^p 
+    Then w can be written in the form uvx with |uv| <= p and |v| >= 1 so that
+        uv^ix in L1 for all i>=0
+    To get the contradiction, I show that every way to write w = uvx with |uv| <= and |v| >= 1 yeilds some i for which uv^ix is not in L1
+    In all cases, u and v contain only a's. This always holds for w because |uv| <= p.
+        So there exists integers α, β so that u = a^α, v = a^β, x = a^(p-α-β)b^p with α + β <= p and β >= 1
+    Consider uv^2x
+        = a^αa^βa^βa^(p-α-β)b^p
+        = a^(p+β)b^p
+        because β != 0, a^(p+β)b^P not in L1
+    Contradiction.
+
+Claim: {w in L: (ab)^n(ba)^n for all n >=0} is not regular
+Proof: Suppose to the contrary that L is regular. By the pumping lemma, L hasa  pumping length p. 
+    Choose w = (ab)^p(ba)^p 
+    Note that w in L and |w| >= p
+    We must show that for every way to write w = uvx with |uv| <= p and |v| >= 1, uv^ix in L for all i>=0
+    How can w be written as uvx? 
+    w = ababababab... ab bababababa...ba
+    [ bad way to break into cases
+        case: u = (ab)^α; v = (ab)^β; x = (ab)^(p-α-β)(ba)^p
+              u = (ab)^α; v = (ab)^(β-1)a; x = b(ab)^(p-α-β)(ba)^p
+    ]
+    [ good way to break into cases
+        case 1: v contains a different number of a's and b's
+            then uv^2x contains a different number of a's and b's, and so uv^2x is not in the language
+        case 2: u = (ab)^α; v = (ab)^β 
+            then uv^4x (why 4? no reason, random choice) = (ab)^(p+3β)(ba)^p is not in L
+        case 3: u = (ab)^αa; v = b(ab)^βa
+            then uv^2x = (ab)^(p+β+1)(ba)^p
+            because β+1 != 0, uv^2x not in L
+    ]
+
+Claim: L' = {a^nb^m: n>m}
+Proof: Suppose to the contrary that L' is regular. Let p be L''s pumping length.
+    [ stupid answer
+    choose w = a^(p+2)b^p
+    u = ε; v = a x=a^(p+1)b^p
+    uv^ix is in the language
+    No contradiction DOES NOT PROVE ANYTHING.
+    ]
+    [ smart answer
+    w = a^(p+1)b^p
+    u = a^α; v = a^β; x = a^(p+1-α-β)b^; α+β<=p; β>=1
+    what is uv^ix
+    a^(p+1+(i-1)*β)b^p
+        if not in L', then p+1+(i-1)*β <= p
+        (i-1)*β + 1 <= 0
+        choose i = 0
+        -β + 1 <= 0
+    Contradiction. uv^0x is not in L'
+    ]
+
+Claim: L'' = {a^nb^m: n != m}
+    w = a^pb^(p+p!)
+    u = a^α; v = a^β; x = a^(p-α-β)b^(p+p!)
+    chose i = (p!)/β + 1
+
+Grammars:
+    S -> 0S|T
+    T -> IT|ε
+
+    s => 0S => 00S => 000S => 000T => 0001T => 0001
+    Language = 0*1*
+
+A grammar is a 4-tuple (V, Σ, R, S) where
+    1. V is a finite set of variables
+    2. Σ is a finite set of terminals
+    3. S in V is the start variable
+    4. R is a set of rules
+
+A grammar is regular if every rule is of the form 
+    A -> ab
+    A -> a
+    A -> B
+    A -> ε
+
+S => w1 (S produces/yeilds w1) => w2 => ... => wk
+    derivation of wk
+language generated by the grammar is the set of all strings that can be derived from S AND belong to Σ* (no variables left)
+
+    S => 0S => 00S => 00T => 00
+    00 is a derivation of S
+    S =>* w There are 0 or more rule applications starting with S deriving w
+    S =>* 00
+
+                    S
+                0       S
+                    0       S
+                            T
+                            ε
+
+Consider languages generated by regular grammars 
+    Given an NFA (Q, Σ, δ, q0, F), form a grammar with variables Q. Start variable q0
+    Form rules as follows:
+        1. If q1 in δ(q2, a) then add rule
+            q2 -> aq1
+        2. If q1 in δ(q2, a) and q1 is a final state, add rule
+            q2 -> a
+    Every regular language is generated by a regular grammar
+
+Claim: Every language generated by a regular grammar is regular.
+Proof: To show this, construct an NFA from a regular grammar (V, Σ, R, S)
+    The states of the NFA are (Q, Σ, δ, q0, F)
+        Q = V union {q_final}
+        δ = 
+            if A -> aB:
+                B in δ(A, a)
+            if A -> B:
+                B in δ(A, ε)
+            if A -> a:
+                qfinal in δ(Α, a)
+            if A -> ε:
+                qfinal in δ(A, ε)
+
+        q0 = S
+        F = {q_final}
+
+S -> 0S1
+S -> ε
+
+A grammer is context free if every rule is of the form:
+    A -> w
+    with A in V and w in (V union Σ*)
+
+DEFINITION: A language is context free if it is generated by some context free grammar
+EX: {0^n1^n: n>=0} is a CFL
+
+S -> (S)
+S -> SS
+S -> ε
+The language of this grammar is the set of balanced parenthesis 
+
+(()())
+
+S => (S) => (SS) => ((S)S) => ((S)(S)) => ((S)()) => (()())
+
+in a leftmost derivation, we always substitue the left most variable
+
+S => (S) => (SS) => ((S)S) => (()S) => (()(S)) => (()())
+
+leftmost derivations are in 1-1 correspondence with parse trees.
+
+S => SS => S
+
+A grammer is ambiguous if there is at least one string w in the language of the grammar for which w has 2 ore more parse trees
+
+S => ε 
+S => SS => S => ε
+
+otherwise it is unambiguous
+    S -> 0S1 | ε   =   {0^n1^n | n>=0}
+
+Is there an unambiguous grammar for balanced parenthesis?
+    (()())()
+
+    S -> (S)S | ε
+This grammar in unambiguous
+
+S -> A
+A -> B
+B -> C 
+C -> D
+D -> A
+A -> a
+
+S -> ABCDEFGHIJKL
+A -> a  A -> ε
+B -> b  Β -> ε
+.
+.
+.
+L -> l  L -> ε
+
+Normal form:
+    idea: restrict the types of rules allowed without changing the class of languages generated
+
+    idea 1: Don't allow ε on the right hand side of a rule except for S -> ε
+
+Eliminate unit rules: Form a directed graph whose vertices are variables, and add directed edge from A to B whenever A->B is a unit. Then whenever A->B and B->C add unit rule A->C if it's not already present.
+
+Whenever there is a rule X -> uAv with u,v in (VuΣ)*
+and a rule A->B, then add the rule X -> uBv if not already present.
+
+Once no new rules, delete all unit rules
+
+1) Start variable is not recursive
+2) No ε except possibly S->ε 
+3) No unit rules
+
+Note: In a derivation*, either the string being derived gets longer, or the number of terminals increases, or both
+    *of a nonempty string
+
+4) Ensure that Right Hand Sides of every rule consists either of 
+    1) a single terminal and nothing else
+    or 
+    2) only variables
+
+X -> abBaCcDd
+Idea: For each symbol a in Σ, add a rule Ua -> a
+X -> UaUbBUaCUcDUd
+Now in every rule X->u in which the length of u is >= 2, replace each a in Σ with Ua
+
+X-> ABCDEFGH
+
+5) Ensure that every rule with variables on RHS has exactly 2 variables, and no terminals.
+
+A-> BCD
+replaced by
+A -> BT
+T -> CD 
+For A -> A1A2...Al with l >=3
+replace by 
+A -> A1U
+U -> A2...Al 
+etc.
+
+1. start variable not recursive
+2. Every rule of the form
+    A -> a for A in V, a in Σ
+    A -> BC for A, B, C in V; B, C not start variables
+    or 
+    S -> ε
+A Context Free Grammer satisfying this is in Chomsky normal form (CNF)
+
+Claim: Every CFL is generated by a CFG in CNF
+
+Let G be a CFG in CNF. Let w be a string generated by G.
+In any parse tree for w != ε, removing the leaves gives a binary tree
+if |w| = n, then the parse tree has exactly n leaves (provided n>0)
+
+If I tell you the number n of leaves (i.e the length of w), what w is the smallest height of a possible parse tree for w?
+
+n = 2: 1
+n = 3: 2
+n = 4: 2
+n = 5-8: 3
+n = 9-16: 4
+n = 17-32: 5
+
+After leaves stripped: binary
+
+w = w1...wn
+
+Supose wi is chosen to be at the largest height in the tree
+what are the labels on nodes in the parth? they are all variables
+
+Suppose L is a CFL. Then L (by definition) is generated by a CFG. In fact, L is generated by a CFG in CNF. Let G = (V, Σ, R, S) be this grammar. Note: V is finite. 
+    |V| = 1; Doesn't make sense
+    |V| = 2; d = 3
+    |V| = 3; d = 4
+    |V| = 4; d = 5 etc. 
+    |V| = n; d = n+1
+Suppose that a string is generated whose length is 2^|V| + 1. Then the height of the tree must be at least |V| + 1
+Now for any string w of length at least 2^|V| + 1, EVERY parse tree for w must have height at least |V|
+    Consider a parse tree for w:
+        S
+      /   \
+     /     \
+    /_______\
+    There exists a root-to-leaf path with more than |V| variables.
+    Label variables starting at the leaf's parent. X0, X1, X2, ..., Xl
+    Note: l >= |V|
+    We conclude that for some i, j with i != j we have Xi = Xj (pigeonhole)
+    Choose i, j so that i!=j, Xi=Xj, and j is as small as possible.
+
+    S  =>* uXjZ
+    Xj =>* vXiy NOTE: vy != ε
+    Xi =>* x equiv. Xj =>* x
+
+    Let A = Xi = Xj
+    S =>* uAz
+    A =>* vAy
+    A =>* x
+
+
+    S =>* uAz =>* uxz
+              =>* uvAyz =>* uv
+              =>* uvvAyyz =>* uv^2xy^2z
+              =>* uv^iAy^iz =>* uv^ixy^iz
+
+    Pumping lemma for context-free languages.
+        Let L be a CFL. Then there exists a finite integer p (the pumping length) depending only on L, so that whenever w in L and |w| >= p, w can be written as uvxyz so that 
+            1. |vy| >= 1
+            2. |vxy| <= p
+            3. uv^ixy^iz in L for all i >= 0
+
+L = {0^n1^n2^n : n>=0}
+Show L is not a CFL
+Suppose to the contrary that it is, and let p be its pumping length. Choose a w in L with |w| >=p
+Chose w = 0^p1^p2^p
+By the pumping lemma, 0^p1^p2^p = uvxyz where |vy| >= 1, |vxy| <= p, uv^ixy^iz in L for all i >= 0
+How can we partition w into 5 peices uvxyz so that |vy| >= 1, |vxy| <= p.
+Neither v nor y can contain a 0, a 1, and a 2
+In fact, vy cannot contain a 0, a 1, and a 2
+Case 1: v or y contains a 0 and a 1.
+    Then uv^2xy^2z contains 10 as a substring and so is not in L
+Case 2: v or y contains a 1 and a 2
+    Then uv^2xy^2z contains 21 as a substring and so is not in L
+Case 3: v = 0^α, y = 0^β 
+    Then uv^0xy^0z has p-α-β 0s, p 1s, p 2s. because α+β>=1, p-α-β != p, contradiction. 
+    Cases v = 1^α, y=1^β; v = 2^α, y=2^β are similar
+Case 4: v=0^α, y=1^β OR 
+    uv^0xy^0z has p-α 0's, p-β 1s, p 2's
+    Because α+β>=0, cannot be that p-α == p-β == p; contradiction
+    Case v=1^α, y=2^β  is similar
+
+Closure properties.
+    Claim: CFLs are closed under the regular operations
+    Proof: 
+        Union:
+            (V1, Σ, R1, S1) (V2, Σ, R2, S2) are CFGs for which V1 intersect V2 = Ø
+            Let L1 be first language, L2 the second
+            To make a CFG for L1 union L2:
+                (V1 union V2 union {S}, Σ, R1 union R2 union {S -> S1, S -> S2}, S)
+
+        Concatenation:
+            (V1 union V2 union {S}, Σ, R1 union R2 union {S -> S1S2}, S)
+
+        Star:
+            (V1 union {S}, Σ, R1 union {S -> ε|S1S}, S)
+
+        Intersection:
+            CFLs are not closed under intersection
+            {0^n1^n1^m | n,m>=0} CFL
+                S => TA
+                T => 0T1 | ε
+                Α -> 2Α | ε
+            intersection {0^m1^n2^n | n, m>=0} CFL
+            is {0^n1^n2^n | n >= 0} NOT A CFL
+
+        Complementation:
+            Also no, because no closure under intersection
+
+Machine model for CFLs
+    Start with FA model and "add something"
+        * Add a stack
+        A pushdown automaton (PDA)
+        is a 6-tuple (Q, Σ, Γ, δ, q0, F)
+            where   Q = finite set of states
+                    Σ = finite input alphabet
+                    Γ = finite stack alphabet
+                    δ = transition function
+                    q0= start state
+                    F = set of final states
+
+        Each Transition:
+            1. looks at current state
+            2. optionally reads an input 
+            3. optionally pop the stack
+            then we
+            4. change state
+            5. optionally push the stack
+
+Converting CFG to PDA:
+    Definition: An extended PDA is just like a PDA but it can push a finite sequence of stack symbols in one transition
+        a,x -> w where w in Σ union {ε}, x in Γ union {ε}, w in Γ*
+        if w = w1w2...wn with wi in Γ, then push wn then w(n-1) then ... then w1
+
+    Claim: If an extended pda recognizes language L, then there is a PDA to recognize L
+        say w = w1...wn
+        |A| -- a,x->w --> |B|
+        |A| --a,x->wn --> | | --ε,ε->w(n-1) --> | | --ε,ε->w(n-2) --> | | --[...] --> | | --ε,ε->w1 --> |B|
+                      |_______________________________New States______________________________|
+
+    Claim: Every CFL is recognized by a PDA
+    Proof: 
+        Consider a CFG (V, Σ, R, S) for the CFL. Produce an equivalent extended PDA as follows. 
+            -> | | -- ε,ε->$ --> | | -- ε,ε->S --> | | <--> ε,xi->wi for every xi->wi in R
+                                                  / ^
+                                          ε,$->ε /  | a,a->ε for each a in Σ
+                                                v   v
+                                               | |  
+
+
+            Σ for PDA = Σ for grammer
+            Γ for PDA = V union {$}
+
+    Claim: If L is recognized by a PDA, then L is a context-free language
+    First, we'll show an easier Claim
+    Claim: If there exists a PDA to recognize L, then there exists a PDA to recognize L that whenever it accepts a string w, has a computation that accepts w and leaves the stack empty.
+    To do this, add a new first state qf, and whenever a state q is in F, add a transition ε,ε->ε from q to qf
+    Now make each q in F NOT final. Add transitions ε,x->ε from qf to qf for each x in Γ. 
+    Make a futher change in the PDA so that every transition either pops or pushes but not both
+
+    | | -- a,ε->ε --> | | 
+    | | -- a,ε->z --> | | -- ε,z->ε --> | | z in Γ
+                  |_new state_|
+
+    | | -- a,x->y --> | |
+    | | -- a,x->ε --> | | -- a,ε->y --> | |
+                  |_new state_|
+
+    For every p,q in Q, make a variable A_pq
+    Idea - A_pq will generate all strings in Σ* that drive the PDA from p to q, starting and ending with empty stack.
+    What is union (p in F) language for A_q0,p
+
+    S -> A_q0,p1 | A_q0,p2 | ... | A_p0,pl
+        where F = {p1,p2,...,pl}
+
+    Rules:
+        1) For each p in Q, A_p,p -> ε.
+
+
+        /_______________________________\
+        |                               |
+        time=0                          end
+
+        2) For each p,q,r in Q
+            A_(p,q) -> A_(p,r).A_(r,q)
+
+        3) Whenever (r, x) in δ(p,a,ε) and (q, ε) in δ(s, b, x) a,b in Σunion{ε}
+            add the rule A_(p,q) -> aA_(r,s)b
+
+Deterministic PDAs
+    Suppose you are in state q with x on the stack and a on the input.
+    In a PDA we could define 
+        δ(q,a,x)
+        δ(q,a,ε)
+        δ(q,ε,x)
+        δ(q,ε,ε)
+    In a DPDA, only one of these can be nonempty
+    In fact, three must be empty and the fourth cannot contain more than one choice.
+    In fact, one must have exactly one choice.
+
+    DCFL - Languages recognized by a DPDA
+
+    Regular languages are a subset of deterministic context-free languages are a subset of context-free languages
+
+    CFLs are not closed under complementation.
+    Claim:
+        DCFLs are closed under complementation.
+    Proof:
+        Too complicated, will not be covered or tested.
+
+Turing Machines (oh god):
+    More powerful than a PDA?
+    Idea:  - A second stack?
+        or - a queue.
+        or - a tape
+    one-way infinite tape
+
+    _ means "blank"
+    outline of a turing machine operation
+        Initially, the tape contains the input w, left-justified, followed by infinitely many _. Tape head is at the left-most cell.
+        Each transition:
+            1) Looks at current state
+            2) Reads the tape cell under tape head
+            and based on these
+            3) Writes a new symbol under the tape head
+            4) Goes to a new state
+            5) Moves the tape head left or right
+
+        L = {0^(2^n) | n >= 0}
+        {0,00, 0000, 00000000, ...}
+
+        Unary - ||||||||||||||||
+
+        |0|0|0|0|0|0|0|0|_|_|...
+
+        If I give you a list of x 0's, decide if x is a power of 2
+        Case 1: if x = 1 then yes
+        Case 2: if x > 1 then x is a power of 2 iff x/2 is a power of 2
+
+    Turing machine notation:
+        | | ---------------------------> | |
+               read->write,direction
+
+    Turing machines are 7-tuples (Q, Σ, Γ, δ, q0, q_accept, q_reject) where Q, Σ, Γ, δ are all finite sets and 
+        1. Q is the set of states,
+        2. Σ is the input alphabet not containing the black symbol _
+        3. Γ is the tape alphabet where _ in Γ and Σ is a subset of Γ 
+        4. δ: QxΓ -> QxΓx{L,R} is the transition function
+        5. q0 in Q is the start state
+        6. q_accept in Q is the accept state
+        7. q_reject in Q is the reject state, where q_reject != q_accept
+
+    Configuration of a TM. 
+        Idea:
+            |w1|w2|w2|...|w(i-1)|wi|w(i+1)|...|wl|_|_|_|_|...
+            Written as a string
+            w1w2...w(i-1)qwi...wl
+
+        let c1 = uqav where
+            q in Q
+            u,v in Γ*
+            a in Γ
+
+        if δ(q, a) = (q', b, R)
+            c2 = ubq'v if v != ε
+            c2 = ubq'_
+            then c1 yields c2
+
+        let G' = ucqav where
+            q in Q
+            u, v in Γ*
+            c, a in Γ
+
+        if δ(q, a) = (q', b, L)
+        let c2' = uq'cbv
+        then c1' yields c2'.
+
+        if C'' = qav and δ(q,a) = (q', b, L)
+
+    A configuration is accepting if it contains q_accept
+    A configuration is rejecting if it contains q_reject
+    Note: c1 yields c2 ONLY IF c1 is neither accepting nor rejecting
+
+    A computation is a sequence of configuations c0, c1, ..., cm
+        where c0 is start config,
+        c(i-1) yields ci for 1 <= i <= m
+        cm is accepting or rejecting
+    - accepting computation if cm accepting
+    - rejecting computation if cm rejecting
+
+    Lte M be a TM
+    The language recognized by M is the set of all strings w in Σ* so that M has an accepting computation on w.
+    When L is recognized by a turing machine, it is turing recognizeable
+
+    A TM decides a language L if 
+        1) it has an accepting computation on each w in L 
+        2) it has a rejecting complementation on each w not in L
+
+    A language is Turing decidable if there is a TM that decides it.
+
+    Decider: {ww: w in {0,1}*}
+    High-level description:
+    1) find the middle of the input.
+    2) shift everything after the middle right one position and insert a # at the middle
+    3) as whether result is in {w#w: w in {0,1}*}
+
+        1) "middle" means that string has even length and we can find the start of second half
+            010010
+
+Varients of TM:
+    I Multitape TM:
+        Claim: L is recognized by a multitape turning machine iff it is recognized by single-tape one
+
+Claim: L is turing enumerable iff L is turing recognizeable
+    To build a recognizer for L, start with an enumerator M' for L.
+        On input w:
+            1. repeatedly run M' to output the next string x
+            2. if x = w, accept. If not, goto 1
+    Suppose R is a recognizer for L:
+        Build an enumerator E for Σ*
+        Bad idea: 
+            repeatedly run E until it outputs one more string w. 
+            Run R on w until it halts
+            Print w on output if R accepts
+        Idea: We can run E to make a list of the first i strings that it outputs
+            w1,w2,...,wi
+            Run R on each of w1,w2,...wi for i transitions. If R has not halted, it does not yet accept.
+            Pick x. Find j s.t. x = wj. If x in L then R accepts x within a finite number i of transitions.
+
+Nondeterministic TMs. 
+    δ: QxΓ -> P(QxΓx{L,R})
+    Computation:
+        config: smae as for deterministic but here each config may yield any finite # of configs.
+
+        * Start config.
+        /\
+       / /\
+      /\ \/\   Computation tree could be finite or infinite
+
+    An NTM is a decider if every computation halts.
+    The NTM accepts w if it has at least one accepting computation on w.
+
+    Every language recognizedby a NTM is recognized by DTM
+    Every language decided by a NTM that always halts is decided by DTM.
+
+Algorithm - finite sequence of steps that can be implemented on a "typical" computer
+    Turing Machine - Turing (1936)
+    λ-calculus - Church (1930's)
+    Rewriting system - Post (1930's)
+
+Church-Turing thesis
+    "Intuitive" notion of algorithms <=> Turing machines
+    Encoding: #Q#Σ#δ#q0#F
+             /   \
+            #q0q1...#
+        Call it DFA M
+        Encoding of M is <M>
+                 of M and string w is <M, w>
+
+
+        A_DFA = {<M, w> | M is a DFA and w in L(M)}
+        is Turing-Decidable
+        On input <M, w>: 
+            0. If M is not a valid DFA, reject
+            1. Run M on w.
+            2. If M accepts w, then accept
+                If M does not accept w, then reject
+
+        A_NFA: {<M, w> | M is a NFA and w in L(M)}
+        On input <M, w>:
+            0. If M is not a valid NFA, reject
+            1. Convert M into equivalent DFA D
+            2. Run A_DFA(<D, w>)
+                If A_DFA accept, accept
+                If A_DFA rejects, reject
+
+        A_REX: {<R, x> | R is a regex and x is in L(R)}
+        On input <R, x>:
+            1. Convert R to an equivalent NFA N
+            2. Run A_NFA(<N, x>)
+                If A_NFA accept, accept
+                If A_NFA rejects, reject
+
+        E_DFA = {<M> | M is a DFA, L(M)=ε}
+        On input <M>:
+            1. Treat M as a directed graph G.
+            2. Perform BFS from the start state of M.
+                If any final state is encountered, reject
+                Otherwise, accept
+
+        EQ_DRA = {<M1, M2> | M1, M2 are DFAs and L(M1)=L(M2)}
+        On input <M1, M2>:
+            1. Make M1' st L(M1') = L(M1)_compliment
+            2. Make M2' st L(M2') = L(M2)_Compliment
+            3. Construct a DFA C with language (L(M1) intersect L(M2')) union (L(M2) intersect L(M1'))
+            4. Run E_DFA(<C>)
+                IF E_DFA accept, accept.
+                Otherwise, reject
+
+        ALL_DFA = {<M> | L(M) = Σ*}
+        On input <M>:
+            1. Make M' st L(M') = L(M)_compliment
+            2. Run E_DFA(<M'>)
+                If E_DFA accepts, accept
+                Otherwise, reject
+
+
+        A_CFG = {<G, w> | G is a CFG, w in L(G)}
+        On input <G, w>:
+            1. Convert G into a CFG in CNF G'
+            2. If w = ε and S -> ε is a rule in G', accept
+            3. If w = ε and S -> ε is not a rule in G', reject
+            4. Construct every way to apply 2|w|-1 rules to S. 
+            5. If any generate w, accept
+                Otherwise, reject
+
+        E_CFG = {<G> | L(G)=ε}
+            1. Label all terminals "marked"
+                and all variables "unmarked"
+            2. while there is a rule X -> u1u2...ul
+                with u1,...,ul all marked and X not marked, mark X
+            3. If S is makred, then language is not empty. otherwise it is
+
+
+Models M:
+    problems        |     DFA, NFA, regex, RG   |   CFG, PDA    |   TM
+    acceptance      |        decidable          |   decidable   |   undecidable/recognizeable
+    emptiness       |        decidable          |   decidable   |   undecidable/
+    equivalence     |        decidable          |   undecidable |
+
+    Claim:
+        A_TM = {<M, w> | M is a TM that accepts w} is undecidable
+    Proof: 
+        Suppose to the country that A_TM is decidable and that H is a TM that decides it. So
+            H(<M, w>) = {
+                        accept if M accepts w; 
+                        reject if M does not accept w
+                        }
+
+        Define D = On input <M>: 
+            1. Run H on <M, <M>>
+            2. If H accepts, reject
+                If H rejects, accept
+
+        D(<M>) = {
+                accept if M does not accept <M>
+                reject if M does accept <M>
+                }
+
+        What is D(<D>)?
+        D(<D>) = {
+                accept if D does not accept <D>
+                reject if D does accept <D>
+                }
+        So D does not exist because that makes no fucking sense.
+        So H does not exist.
+        So A_TM is not decidable
+
+Claim: 
+    Let L be a language. 
+    If L is recognizable and L_bar is recognizable, then L is decidable. 
+    Proof:
+        Let M be a recognizer for L.
+        Let M' be a recognizer for L_bar.
+    To decide L: 
+        On input w:
+            For i = 0,1,2,...
+                Run M on w for i steps.
+                Run M' on w for i steps.
+                If M accepts, accept.
+                If M' accepts, reject
+
+A_TM recognizeable (yes) and A_TM_bar recognizeable (no)
+    -> A_TM decidable (no)
+
+So A_TM not decidable
+
+Given a solution for b, can you provided a solution for A.
+If B 'has a solution', then so does A.
+If A has no solution, then neither does B. 
+
+HALT_TM = {<M, W> | M halts on input w}
+Can I reduce A_TM to HALT_TM?
+    Let H (to the contrary) be a decider for HALT_TM
+    To decide A_TM:
+        On input <M, w>:
+            1. Run H on <M, w>
+                If H reject, reject. Otherwise, proceed to next step.
+            2. Run M on w. If accepts, accept. If reject, reject.
+
+Given <M, w> want to construct M1 that has empty lanauge of M does not accept w, nonempty language of M does accept w. 
+
+M1:
+    On input x:
+        1. if x != w, reject.
+        2. Otherwise, run M on w. If accepts, accept
+L(M1) = emptyset if M does not accept w.
+
+Suppose E (to the contrary) decides E_TM.
+To decide A_TM:
+    On input <M, w>:
+        1. construct M1 as above.
+        2. Run E on <M1>. If E accept, reject. If E reject, accept.
+
+To decide E_TM:
+    On input <M>
+        1. Construct a TM M_ø as follows:
+            On input x: reject.
+        2. Run Q on <M, M_ø> if Q accepts, accept. If Q rejects, reject.
+
+    Because E_TM is not decidable, EQ_TM is not decideable.
+
+REGULAR_TM = { <M> | M is a TM for which L(M) is regular.}
+Claim: REGULAR_TM is undecidable
+    Reduce A_TM to REGULAR_TM
+        Suppose R decides REGULAR_TM. To decide A_TM
+            On input <M, w>:
+                1. Construct a TM T as follows
+                    On input x:
+                        a) If x is of the form 0^n1^n
+                            accept
+                        b) Run M on w. If M accepts, accept.
+                    [NOTE: L(T) = {0^n1^n if M does not accept w; Σ* if M accepts w}]
+                2. Run R on <T> If R accepts, accept. If R rejects, reject
+
+Let L be a language of TM descriptions
+    L is a property of the language of a turing machine when:
+        1) L contains TM descriptions
+        2) for two TM descriptions <M1>,<M2>
+            <M1>, <M2> in L or
+            <M1>, <M2> not in L
+        A property is nontrivial if some TMs have the property and some do not.
+
+Rice's Theorem. 
+    Every nontrivial property of the language of a TM is undecidable.
+    Proof
+        Let P be a nontrivial property
+        Suppose to the contrary that P is decidable, and that R_P decides it. 
+        Suppose that without loss of generality M_Ø does not have property P. Because P is nontrivial, some TM T does have property P.
+        To decide A_TM 
+            On input <M, w>
+                1. Construct a TM M_w: 
+                    On input x:
+                        a) Simulate M on w. If rejects, reject
+                        b) Run T on x. Accept if T accepts.
+                2. Use R_P to decide if M_w has property P. If yes, accept. if no, reject
+
+Languages:
+    * may be decided/recognized by a TM
+    * can describe machines
+    * can describe computations of machines
+
+TM M input w
+    C0 - initial config
+    Ci - configuration
+    Cm - accepting configuration
+    C(i-1) yeilds Ci for each 1 <= i <= m
+
+Computation history
+    #C0#C1#...#Cm#
+
+Consider the lanauge of accepting computation histories of M on w
+
+Can we decide whether a string is an accepting computation history of M on w?
+    Input: #C0#C1#...#Cm#
+        If it does not start and end with a #, reject.
+        If any Ci not a config, reject.
+        If C0 not start config, reject.
+        If Cm not accepting, reject.
+        If C(i-1) does not yeild Ci for some 1<=i<=m, reject.
+        Accept.
+
+Define: A liniear bounded automaton (LBA) is a TM that never moves the tapehead right past end of input
+
+What about A_LBA? E_LBA? EQ_LBA?
+    E_LBA is undecidable.
+    EQ_LBA is undecidable.
+
+Claim: A_LBA is decidable.
+    Let M be an LBA and w be an input of length n.
+    How many configurations of M on w are there?
+    Suppose M has q states and g tape symbols.
+        nq(g^n)
+    To decide, run M on w for nqg^n + 1 steps. If it accepts, accept. If it has not accepted, reject.

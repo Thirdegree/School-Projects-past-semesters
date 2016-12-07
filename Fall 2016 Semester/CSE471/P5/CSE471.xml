@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BIF VERSION="0.3"  xmlns="http://www.cs.ubc.ca/labs/lci/fopi/ve/XMLBIFv0_3"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.cs.ubc.ca/labs/lci/fopi/ve/XMLBIFv0_3 http://www.cs.ubc.ca/labs/lci/fopi/ve/XMLBIFv0_3/XMLBIFv0_3.xsd">
+<NETWORK>
+<NAME>Untitled</NAME>
+<PROPERTY>detailed = </PROPERTY>
+<PROPERTY>short = </PROPERTY>
+
+<VARIABLE TYPE="nature">
+	<NAME>There is inferior plutonium</NAME>
+	<OUTCOME>T</OUTCOME>
+	<OUTCOME>F</OUTCOME>
+	<PROPERTY>position = (7185.0, 5067.0)</PROPERTY>
+</VARIABLE>
+
+<VARIABLE TYPE="nature">
+	<NAME>There is low Quality Heavy Water</NAME>
+	<OUTCOME>T</OUTCOME>
+	<OUTCOME>F</OUTCOME>
+	<PROPERTY>position = (7640.0, 5062.0)</PROPERTY>
+</VARIABLE>
+
+<VARIABLE TYPE="nature">
+	<NAME>Core meltdown</NAME>
+	<OUTCOME>T</OUTCOME>
+	<OUTCOME>F</OUTCOME>
+	<PROPERTY>position = (7398.0, 5188.0)</PROPERTY>
+</VARIABLE>
+
+<VARIABLE TYPE="nature">
+	<NAME>Glow-in-the-dark Homer</NAME>
+	<OUTCOME>T</OUTCOME>
+	<OUTCOME>F</OUTCOME>
+	<PROPERTY>position = (7140.0, 5303.0)</PROPERTY>
+</VARIABLE>
+
+<VARIABLE TYPE="nature">
+	<NAME>Melted slurpees</NAME>
+	<OUTCOME>T</OUTCOME>
+	<OUTCOME>F</OUTCOME>
+	<PROPERTY>position = (7620.0, 5313.0)</PROPERTY>
+</VARIABLE>
+
+<DEFINITION>
+	<FOR>There is inferior plutonium</FOR>
+	<TABLE>0.3 0.7</TABLE>
+</DEFINITION>
+
+<DEFINITION>
+	<FOR>There is low Quality Heavy Water</FOR>
+	<TABLE>0.4 0.6</TABLE>
+</DEFINITION>
+
+<DEFINITION>
+	<FOR>Core meltdown</FOR>
+	<GIVEN>There is inferior plutonium</GIVEN>
+	<GIVEN>There is low Quality Heavy Water</GIVEN>
+	<TABLE>0.94 0.06 0.7 0.3 0.8 0.2 0.06 0.94</TABLE>
+</DEFINITION>
+
+<DEFINITION>
+	<FOR>Glow-in-the-dark Homer</FOR>
+	<GIVEN>Core meltdown</GIVEN>
+	<TABLE>0.5 0.5 0.05 0.95</TABLE>
+</DEFINITION>
+
+<DEFINITION>
+	<FOR>Melted slurpees</FOR>
+	<GIVEN>Core meltdown</GIVEN>
+	<TABLE>0.9 0.1 0.1 0.9</TABLE>
+</DEFINITION>
+</NETWORK>
+</BIF>
