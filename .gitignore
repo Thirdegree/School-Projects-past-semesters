@@ -1,2 +1,7 @@
 *.zip
 *-test*
+*.mp4
+*.mov
+*.flv
+.git/*
+Capstone/Dr.Discovery-*

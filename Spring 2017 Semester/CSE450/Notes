@@ -1,0 +1,239 @@
+Algorithms
+
+    Stable matching problem.
+        Goal: Given a set of n men and a set of n women, find a "suitable" matching.
+
+        Def. A matching S is a set of ordered pairs m-w with m in M and w in W s.t.
+            * Each man m in M appears in at most one pair of S.
+            * Each woman w in W appears in at most one pair of S.
+
+        Def. A matching S is perfect if |S| = |M| = |W| = n
+
+        M  W
+        -  -
+        X  A 
+        Y  B
+        Z  C
+
+        S = {(X, A), (X, B), (Z, C)}
+
+        S is not a matching.
+
+        S = {(X, B), (Y, A)}
+
+        S is not perfect, but is a matching.
+
+        S = {(X, B), (Y, A), (Z, C)}
+
+        S is a perfect matchings
+
+        In general, S is a subset of MxW
+
+        Def. Given a perfect matching S, man m and woman w are unstable if (both):
+            * m prefers w to his current partner
+            * w prefers m to her current partner
+
+        Key point. An unstable pair m-w could each improve partner by joint action.
+
+        Def. A stable matching is a perfect matching with no unstable pairs.
+
+        Stable matching problem. Given the preference lists of n men and n women, find a stable matching (if one exists).
+
+
+    Stable roommate problem
+        Q. Do stable matchings always exist?
+        A. Not obvious a priori.
+
+        * 2n people; each person ranks others from 1 to 2n-1.
+        * Assign roommate pairs so that no unstable pairs.
+
+        Observations. Stable matchings need not exist for stable roommate problem
+
+    Gale-Shapley deferred acceptance Algorithm
+        * An intuitive method that guarantees to find a stable matching.
+
+        Init S to to empty matching.
+        WHILE (some man m is unmatched and hasn't proposed to every woman)
+            w <- first woman on m's list to whom m has not yet proposed
+            IF (w is unmatched)
+                add pair m-w to matching S
+            ELIF (w prefers m to her current partner m`)
+                remove m`-w from S
+                add m-w to S
+            ELSE
+                w rejects m
+
+        return stable matching S
+
+        Proof of correctness: perfection
+
+            Claim: In Gale-Shapley matching, all men and women get matched.
+
+            By contradiction: 
+                * Suppose that Zeus is not matched upon termination of GS algorithm.
+                * Then some woman, say Amy is not matched upon termination.
+                * By 2) Amy was never proposed to.
+                * But Zeus proposed to everyone, since he ends up unmatched
+
+        proof of correctness: stability 
+
+            Claim: In Gale-Shapley matching, there are no unstable pairs.
+
+            By contradiction:
+                * Suppose the GS matching S* does not contain the pair A-Z.
+                * C1: Z never proposed to A.
+                    * Z prefers his GS partner B to A <= men propose in decreasing order of preference
+                    * A-Z is stable
+                * C2: Z proposed to A
+                    * A rejected Z (right away or later)
+                    * A prefers her GS partner Y to Z <= woman only trade up
+                    * A-Z is stable
+                In either case, the pair A-Z is stable
+
+        efficient implementation. We describe an O(n^2) implementation.
+
+        Representing men and women.
+            Assume men are named 1,..,n
+            Assume women are named 1',..,n'
+
+        Representing the matching.
+            Maintain a list of free men (stack or queue)
+            Maintain two arrays wife[m] and man[n]
+
+        Inverse O(n)
+            n women nxO(n) = O(n^2)
+                O(n^2) + O(n^2) = O(n^2)
+
+        Def. Woman w is a valid partner of man m if there exists some stable matching in which m and w are matched.
+
+        Man-optimal assignment. Each man receives best valid partner.
+            * Is it perfect?
+            * Is it stable?
+
+        Claim. All executions of GS yield a man-optimal assignment
+
+        Proof by contradiction:
+            * Suppose a man is matched with someone other than best valid partner.
+            * Men propose in decreasing order of preference
+                => Some man is rejected by valid partner during GS.
+            * Let Y be first such man, and let A be the first valid woman that rejects him.
+            * Let S be a stable matching where A and Y are matched.
+            * When Y is rejected by A in GS, A forms (or reaffirms) engagement with a man, say Z.
+                => A prefers Z to Y
+            * Let B be the partner of Z in S.
+            * Z has not been rejected by any valid partner (including B) at the point when Y is rejected by A.
+            * Thus, Z has not yet proposed to B when he proposes to A.
+                => Z prefers A to B
+            * Thus, A-Z is unstable in S, a contradiction
+
+        Deceit: Machiavelli meets Gale-Shapley
+
+            Q. Can there be an incentive to misrepresent your preference list?
+                * Assume you know men's propose-and-reject algorithm will be run.
+                * Assume preference lists of all other participants are know
+
+                Fat. No, for any man; yes, for any woman.
+
+        Extensions: matching residents to hospitals
+
+            Ex: Men ~= hospitals, Women ~= med school residents.
+
+            V1. Some participants declare others as unacceptable.
+
+            V2. Unequal number of men and women.
+
+            V3. Limited polygamy
+
+            Def. Matching is S unstable if there is a hospital h and resident r such that: 
+                * h and r are acceptable to each other; and
+                * either r is unmatched, or r prefers h to her assigned hospital; and
+                * Either h does not have all its places filled, or h prefers r to at least one of its assigned residents.
+
+        Historical context:
+            National resident matching program (NRMP)
+                * Centralized clearinghouse to match med-school students to hospitals.
+                * Began in 1952 to fix unraveling of offer dates.
+                * Originally used the "Boston Pool" algorithm.
+                * Algorithm overhauled in 1998.
+                    * med-school student man-optimal
+                    * deals with various side constraints
+                        (e.g allow couples to match together) 
+                            *(stable matching no longer guaranteed)
+                * 38,000+ residents for 26,000 positions
+
+            2012 Nobel Prize in Economics
+                * Lloyd Shapley. Stable matching theory and Gale-Shapley algorithm.
+                * Alvin roth. Applied Gale-Shapley to matching new doctors with hospitals, students with schools, and organ donors with patients
+
+        Lessons learned:
+            Powerful ideas learned in course.
+                * Isolate underlying structure of problem.
+                * Create useful and efficient algorithms.
+
+            Potentially deep social ramifications
+                * Historically, men propose to women. 
+                *
+                ...
+                *? 
+
+######################################################################################################################
+Representative problems:
+    Interval scheduling:
+        Input. Set of jobs with start times and finish times.
+        Goal. Find maximum cardinality subset of mutually compatible jobs.
+
+        O(n log n) greedy algorithm
+
+    Weighted interval scheduling:
+        Input. Set of jobs with start times, finish times, and weights.
+        Goal. find the maximum weight subset of mutually compatible jobs.
+
+        O(n log n) dynamic programming algorithm
+
+    Bipartite matching:
+        Problem. Given a bipartite graph G= (L U R, E), find a max cardinality matching.
+        Def. A subset of edges M subset E is a matching if each node appears in exactly one edge in M.
+
+        O(n^2) max-flow based algorithm
+
+    Independent set:
+        Problem. Given a graph G = (V, E), find a max cardinality independent set
+        Def. A subset s subset V is independent if for every (u, v) in E, Either u not in S or v not in S or both.
+
+        NP-complete
+
+    Competitive facility location:
+        Input. Graph with weight on each node.
+        Game. Two competing players alternate in selecting nodes.
+            Not allowed to select a node if any of its neighbors have been selected.
+        Goal. Select a maximum weight subset of nodes.
+
+        PSPACE-complete
+
+Polynomial running time:
+    Desirable scaling property. When the input size doubles, the algorithm should only slow down by some constant factor C.
+
+    Def. An algorithm is poly-time if the above scaling property holds.
+
+    There exists constants c > 0 and d > 0 s.t. on every input of size n, its running time is bounded by C = n^d
+
+Worse-case analysis
+    Worse case. Running time guaantee for any input of size n.
+        * generally captures efficiency in practice.
+        * Draconian view, but hard to find effective alternative.
+
+    Exceptions. Some exponential-time algorithms are used widely in practice because the worst-case instances seem to be rare.
+
+Types of analyses:
+    Worst case
+
+    Probabilistic
+
+    Amoritized
+
+    Average-case
+
+    More...
+
+Analyses: Ω(f(n)) <= T(n) <= O(f(n)
+    if Ω(f(n)) = O(f(n), T(n) = Θ(f(n))
